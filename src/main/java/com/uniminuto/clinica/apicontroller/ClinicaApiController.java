@@ -20,5 +20,7 @@ public class ClinicaApiController implements ClinicaApi {
     public ResponseEntity<RespuestaRs> testService() {       
         return ResponseEntity.ok(this.clinicaService.test());
     }
+
+    
     
 }
