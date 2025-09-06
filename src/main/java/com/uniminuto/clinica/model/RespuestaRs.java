@@ -8,7 +8,6 @@ import lombok.Data;
  */
 @Data
 public class RespuestaRs {    
-    private String mensaje;
-    private boolean estaFuncionando;
+    private String mensaje;   
     private Integer status;
 }
