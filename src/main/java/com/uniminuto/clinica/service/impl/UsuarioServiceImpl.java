@@ -9,10 +9,6 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- *
- * @author lmora
- */
 @Service
 public class UsuarioServiceImpl implements UsuarioSevice {
 
@@ -31,10 +27,9 @@ public class UsuarioServiceImpl implements UsuarioSevice {
 
     @Override
     public Usuario buscarPorNombre(String username) throws BadRequestException {
-        Optional<Usuario> optUser = this.usuarioRepository
-                .findByUsername(username);
+        Optional<Usuario> optUser = this.usuarioRepository.findByUsername(username);
         if (!optUser.isPresent()) {
-            throw new BadRequestException("No se encontro el usuario");
+            throw new BadRequestException("No se encontró el usuario");
         }
         return optUser.get();
     }
@@ -44,4 +39,13 @@ public class UsuarioServiceImpl implements UsuarioSevice {
         return this.usuarioRepository.findByActivo(activo);
     }
 
+    // Método para buscar un usuario por número de documento
+    public Usuario buscarPorNumeroDocumento(String numeroDocumento) throws BadRequestException {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByNumerodocumento(numeroDocumento);
+        if (usuarioOpt.isPresent()) {
+            return usuarioOpt.get();
+        } else {
+            throw new BadRequestException("No se encontró el usuario con el número de documento: " + numeroDocumento);
+        }
+    }
 }

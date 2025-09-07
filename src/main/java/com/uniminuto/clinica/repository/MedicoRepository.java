@@ -15,4 +15,5 @@ import org.springframework.stereotype.Repository;
 public interface MedicoRepository extends JpaRepository<Medico, Long> {
      List<Medico> findByEspecializacion(Especializacion esp);
      Optional<Medico> findByNumeroDocumento(String documento);
+     
 }

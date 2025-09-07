@@ -15,6 +15,8 @@ public interface UsuarioSevice {
     
     Usuario buscarPorNombre(String username) throws BadRequestException;
     
+    Usuario buscarPorNumeroDocumento(String numeroDocumento) throws BadRequestException;
+
     List<Usuario> encontrarPorActivo(boolean activo);
     
 }

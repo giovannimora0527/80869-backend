@@ -19,7 +19,8 @@ import lombok.Data;
 @Entity
 @Table(name="medico")
 public class Medico implements Serializable {
-    @Id
+    
+    @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;

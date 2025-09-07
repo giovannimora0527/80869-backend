@@ -48,4 +48,12 @@ public interface UsuarioApi {
     ResponseEntity<List<Usuario>> buscarPorEstado(
             @RequestParam Integer activo
     ) throws BadRequestException;
+    
+    @RequestMapping(value = "/buscar-por-numero-documento",
+        produces = {"application/json"},
+        method = RequestMethod.GET)
+    ResponseEntity<Usuario> buscarPorNumeroDocumento(
+        @RequestParam String numeroDocumento
+    ) throws BadRequestException;
+
 }

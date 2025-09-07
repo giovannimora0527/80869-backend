@@ -9,37 +9,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- *
- * @author lmora
- */
 @RestController
 public class UsuarioApiController implements UsuarioApi {
 
     @Autowired
-    private UsuarioSevice usuarioSevice;
+    private UsuarioSevice usuarioService;
 
     @Override
     public ResponseEntity<List<Usuario>> listarUsuarios() {
-        return ResponseEntity.ok(this.usuarioSevice.encontrarTodosLosUsuarios());
+        return ResponseEntity.ok(this.usuarioService.encontrarTodosLosUsuarios());
     }
 
     @Override
     public ResponseEntity<List<Usuario>> listarUsuariosPorRol(String rol) {
-        return ResponseEntity.ok(this.usuarioSevice.buscarPorRol(rol));
+        return ResponseEntity.ok(this.usuarioService.buscarPorRol(rol));
     }
 
     @Override
-    public ResponseEntity<Usuario> buscarPorUsername(String username)
-            throws BadRequestException {
-        return ResponseEntity.ok(this.usuarioSevice.buscarPorNombre(username));
+    public ResponseEntity<Usuario> buscarPorUsername(String username) throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.buscarPorNombre(username));
     }
 
     @Override
     public ResponseEntity<List<Usuario>> buscarPorEstado(Integer activo) throws BadRequestException {
-        boolean isActivo = activo == 1? true : false;
-        return ResponseEntity.ok(this.usuarioSevice
-                .encontrarPorActivo(isActivo));
+        boolean isActivo = activo == 1;
+        return ResponseEntity.ok(this.usuarioService.encontrarPorActivo(isActivo));
     }
+    
+    @Override
+    public ResponseEntity<Usuario> buscarPorNumeroDocumento(String numeroDocumento) throws BadRequestException {
+    Usuario usuario = usuarioService.buscarPorNumeroDocumento(numeroDocumento);
+    return ResponseEntity.ok(usuario);
+}
+
+
 
 }
