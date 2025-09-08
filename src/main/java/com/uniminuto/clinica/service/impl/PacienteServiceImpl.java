@@ -25,7 +25,7 @@ public class PacienteServiceImpl implements PacienteService {
     public Paciente buscarPorDocumento(String documento) throws BadRequestException {
         Optional<Paciente> pacienteOpt = pacienteRepository.findByNumeroDocumento(documento);
         if(!pacienteOpt.isPresent()){
-            throw new BadRequestException("No existe paciente con Numero de Documento: "+documento);
+            throw new BadRequestException("No existe paciente registrado con Numero de Documento: "+documento);
         }
         return pacienteOpt.get() ;
     }
