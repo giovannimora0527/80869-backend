@@ -2,6 +2,8 @@ package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.UsuarioApi;
 import com.uniminuto.clinica.entity.Usuario;
+import com.uniminuto.clinica.model.RespuestaRs;
+import com.uniminuto.clinica.model.UsuarioRq;
 import com.uniminuto.clinica.service.UsuarioSevice;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
@@ -40,6 +42,12 @@ public class UsuarioApiController implements UsuarioApi {
         boolean isActivo = activo == 1? true : false;
         return ResponseEntity.ok(this.usuarioSevice
                 .encontrarPorActivo(isActivo));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> guardarUsuarioNuevo(UsuarioRq usuario) 
+            throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioSevice.guardarUsuario(usuario));
     }
 
 }
