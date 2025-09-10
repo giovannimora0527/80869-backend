@@ -60,4 +60,7 @@ public interface UsuarioApi {
     ResponseEntity<RespuestaRs> guardarUsuarioNuevo(
             @RequestBody UsuarioRq usuario
     ) throws BadRequestException;
+
+    @GetMapping(value = "/buscar-por-documento", produces = "application/json")
+    ResponseEntity<Usuario> buscarUsuarioPorDocumento(@RequestParam("documento") String documento);
 }

@@ -39,15 +39,19 @@ public class UsuarioApiController implements UsuarioApi {
 
     @Override
     public ResponseEntity<List<Usuario>> buscarPorEstado(Integer activo) throws BadRequestException {
-        boolean isActivo = activo == 1? true : false;
-        return ResponseEntity.ok(this.usuarioSevice
-                .encontrarPorActivo(isActivo));
+        boolean isActivo = activo == 1 ? true : false;
+        return ResponseEntity.ok(this.usuarioSevice.encontrarPorActivo(isActivo));
     }
 
     @Override
-    public ResponseEntity<RespuestaRs> guardarUsuarioNuevo(UsuarioRq usuario) 
+    public ResponseEntity<RespuestaRs> guardarUsuarioNuevo(UsuarioRq usuario)
             throws BadRequestException {
         return ResponseEntity.ok(this.usuarioSevice.guardarUsuario(usuario));
     }
 
+    // 👉 NUEVO MÉTODO: buscar usuario por documento
+    @Override
+    public ResponseEntity<Usuario> buscarUsuarioPorDocumento(String documento) throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioSevice.buscarUsuarioPorDocumento(documento));
+    }
 }
