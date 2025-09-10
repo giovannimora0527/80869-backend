@@ -1,0 +1,23 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: '1ePwOH<o7p3k'
+      MARIADB_DATABASE: clinica
+      MARIADB_USER: clinica_user
+      MARIADB_PASSWORD: 'pPHW/WI51a#9'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - clinica-net
+
+volumes:
+  mariadb_data:
+
+networks:
+  clinica-net:
