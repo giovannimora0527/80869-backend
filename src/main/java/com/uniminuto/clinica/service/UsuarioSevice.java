@@ -21,4 +21,6 @@ public interface UsuarioSevice {
     
     RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
     
+    
+    
 }
