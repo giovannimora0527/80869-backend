@@ -39,4 +39,6 @@ public class Usuario implements Serializable {
     @Column(name = "activo")
     private boolean activo;
     
+    @Column(name = "numerodocumento") 
+    private String numerodocumento;  
 }

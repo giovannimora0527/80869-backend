@@ -19,4 +19,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     
     List<Usuario> findByActivo(boolean activo);
     
+    Optional<Usuario> findByNumerodocumento(String numeroDocumento);
+    
 }
