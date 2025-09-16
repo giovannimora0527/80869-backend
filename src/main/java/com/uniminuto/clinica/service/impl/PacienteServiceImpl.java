@@ -10,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
+ *Implementación del servicio {@link PacienteService} para el manejo
+ * de la lógica de negocio relacionada con los pacientes.
  *
+ * Proporciona operaciones como listar pacientes, buscar por documento
+ * y listar por edad (ascendente).
  * @author lmora
  */
 @Service
@@ -19,11 +23,23 @@ public class PacienteServiceImpl implements PacienteService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
+    /**
+     * Retorna una lista de todos los pacientes registrados en la base de datos.
+     *
+     * @return Lista de objetos {@link Paciente}.
+     */
     @Override
     public List<Paciente> listarPacientes() {
         return this.pacienteRepository.findAll();
     }
 
+    /**
+     * Busca un paciente a partir de su número de documento.
+     *
+     * @param documento Número de documento del paciente.
+     * @return Objeto {@link Paciente} correspondiente al documento.
+     * @throws BadRequestException si no se encuentra un paciente con ese documento.
+     */
     @Override
     public Paciente buscarPorDocumento(String documento) throws BadRequestException {
         Optional<Paciente> optPaciente = this.pacienteRepository
@@ -32,6 +48,17 @@ public class PacienteServiceImpl implements PacienteService {
             throw new BadRequestException("No se encontro el documento del paciente");
         }
         return optPaciente.get();
+    }
+
+    /**
+     * Lista todos los pacientes ordenados por fecha de nacimiento en orden ascendente.
+     * (Es decir, primero los de mayor edad).
+     *
+     * @return Lista de pacientes ordenados por fecha de nacimiento.
+     */
+    @Override
+    public List<Paciente> listarPacientesPorEdadMayor() {
+        return this.pacienteRepository.findAllByOrderByFechaNacimientoAsc();
     }
 
 }

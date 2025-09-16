@@ -4,10 +4,7 @@ import com.uniminuto.clinica.entity.Paciente;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -17,17 +14,43 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/paciente")
 public interface PacienteApi {
 
+    /**
+     * Lista todos los pacientes registrados en el sistema.
+     *
+     * @return {@link ResponseEntity} que contiene una lista de objetos {@link Paciente}.
+     * @throws BadRequestException si ocurre un error al procesar la solicitud.
+     *
+     */
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Paciente>> listarPacientes() throws BadRequestException;
 
-    
+    /**
+     * Busca un paciente por su número de documento.
+     *
+     * @param numeroDocumento Número de documento del paciente a buscar.
+     * @return {@link ResponseEntity} que contiene el objeto {@link Paciente} encontrado.
+     * @throws BadRequestException si el número de documento es inválido
+     *                             o si no se encuentra el paciente.
+     */
     @RequestMapping(value = "/buscar-x-documento",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<Paciente> buscarPacientePorDoc(
             @RequestParam String numeroDocumento) throws BadRequestException;
+    /**
+     * Lista pacientes filtrados por edad.
+     * (La lógica de filtrado por edad debe ser implementada en el servicio).
+     *
+     * @return {@link ResponseEntity} que contiene una lista de objetos {@link Paciente}.
+     * @throws BadRequestException si ocurre un error al procesar la solicitud.
+     *
+     */
+    @GetMapping(value = "/listar-x-edad",
+            produces = {"application/json"},
+            consumes = {"application/json"})
+    ResponseEntity<List<Paciente>> listarPacientesPorEdad() throws BadRequestException;
 }

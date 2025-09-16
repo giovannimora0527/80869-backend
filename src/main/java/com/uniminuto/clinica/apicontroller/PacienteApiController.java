@@ -30,5 +30,11 @@ public class PacienteApiController implements PacienteApi {
        return ResponseEntity.ok(this.pacienteService
                .buscarPorDocumento(numeroDocumento));
     }
-    
+
+    @Override
+    public ResponseEntity<List<Paciente>> listarPacientesPorEdad() throws BadRequestException {
+        return ResponseEntity.ok(this.pacienteService
+                .listarPacientesPorEdadMayor());
+    }
+
 }
