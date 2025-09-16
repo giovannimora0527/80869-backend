@@ -1,5 +1,6 @@
 package com.uniminuto.clinica.api;
 
+import com.uniminuto.clinica.entity.Paciente;
 import com.uniminuto.clinica.entity.Usuario;
 import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.model.UsuarioRq;
@@ -59,5 +60,9 @@ public interface UsuarioApi {
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> guardarUsuarioNuevo(
             @RequestBody UsuarioRq usuario
-    ) throws BadRequestException;
+    ) throws BadRequestException;       
 }
+
+
+
+

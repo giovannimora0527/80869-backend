@@ -43,6 +43,7 @@ public class UsuarioServiceImpl implements UsuarioSevice {
         }
         return optUser.get();
     }
+    
 
     @Override
     public List<Usuario> encontrarPorActivo(boolean activo) {

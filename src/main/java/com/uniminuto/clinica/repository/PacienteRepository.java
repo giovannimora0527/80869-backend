@@ -1,10 +1,17 @@
 package com.uniminuto.clinica.repository;
 
 import com.uniminuto.clinica.entity.Paciente;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface PacienteRepository extends JpaRepository<Paciente,Integer> {
-    Optional<Paciente> findByNumeroDocumento(String documento);
+/**
+ *
+ * @author lmora
+ */
+@Repository
+public interface PacienteRepository  extends JpaRepository<Paciente, Long> {
+    
+     Optional<Paciente> findByNumeroDocumento(String documento);
+    
 }
