@@ -17,6 +17,12 @@ public class PacienteController implements PacienteApi {
     private PacienteService pacienteService;
 
     @Override
+    public ResponseEntity<List<Paciente>> listarPacienteFecha() {
+        List<Paciente> paciente = pacienteService.encontrarPacienteFecha();
+        return ResponseEntity.ok(paciente);
+    }    
+    
+    @Override
     public ResponseEntity<List<Paciente>> listarPaciente() {
         List<Paciente> pacientes = pacienteService.encontrarTodosLosPacientes();
         return ResponseEntity.ok(pacientes);

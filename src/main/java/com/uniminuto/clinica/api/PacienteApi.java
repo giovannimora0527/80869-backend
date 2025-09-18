@@ -22,6 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface PacienteApi {
     
     
+    
+@RequestMapping(value = "/listar-Por-Fecha",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Paciente>> listarPacienteFecha();
+
 @RequestMapping(value = "/listar",
             produces = {"application/json"},
             consumes = {"application/json"},

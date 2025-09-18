@@ -13,6 +13,8 @@ import org.apache.coyote.BadRequestException;
  */
 public interface PacienteService {
     
+List<Paciente> encontrarPacienteFecha();
+    
 List<Paciente> encontrarTodosLosPacientes();
     
 List<Paciente> buscarPorGenero(String genero);

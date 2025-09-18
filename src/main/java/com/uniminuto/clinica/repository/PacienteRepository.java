@@ -17,6 +17,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
     
+    List<Paciente> findAllByOrderByFechanacimiento();
+    
     List<Paciente> findByNumerodocumento(String numerodocumento);
     
     List<Paciente> findByGenero(String genero);

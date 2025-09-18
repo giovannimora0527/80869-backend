@@ -14,7 +14,12 @@ public class PacienteServiceImpl implements PacienteService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
-
+    
+    @Override
+    public List<Paciente> encontrarPacienteFecha() {
+        return pacienteRepository.findAllByOrderByFechanacimiento();
+    }
+    
     @Override
     public List<Paciente> encontrarTodosLosPacientes() {
         return pacienteRepository.findAll();
