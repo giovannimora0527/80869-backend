@@ -2,6 +2,8 @@ package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.RecetaApi;
 import com.uniminuto.clinica.entity.Receta;
+import com.uniminuto.clinica.model.RecetaRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.RecetaService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RecetaApiController implements RecetaApi {
-    
+
     @Autowired
     private RecetaService recetaService;
-            
+
     @Override
-    public ResponseEntity<String> guardarReceta(Receta receta) {
-        recetaService.guardarReceta(receta);
-        return ResponseEntity.ok("Cita Guardada con Exito");
-        
+    public ResponseEntity<RespuestaRs> guardarReceta(RecetaRq recetaRq) {
+        return ResponseEntity.ok(recetaService.guardarReceta(recetaRq));
     }
 
     @Override
@@ -30,6 +30,4 @@ public class RecetaApiController implements RecetaApi {
     public ResponseEntity<List<Receta>> listarRecetasFechaCreacion() {
         return ResponseEntity.ok(this.recetaService.listarRecetasFechaCreacion());
     }
-
-
 }
