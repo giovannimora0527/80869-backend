@@ -23,6 +23,13 @@ import lombok.Data;
 @Entity
 @Table(name = "receta")
 public class Receta implements Serializable {
+    /** Dosis de la receta. */
+    @Column(name = "dosis", nullable = false)
+    private String dosis;
+
+    /** Indicaciones de la receta. */
+    @Column(name = "indicaciones")
+    private String indicaciones;
     /** Id serializable para la clase. */
     private static final long serialVersionUID = 1L;
 
@@ -37,9 +44,11 @@ public class Receta implements Serializable {
     @JoinColumn(name = "cita_id")
     private Cita cita;
 
-    /** Descripción/indicaciones de la receta. */
-    @Column(name = "descripcion")
-    private String descripcion;
+    /** Medicamento asociado a la receta. */
+    @ManyToOne
+    @JoinColumn(name = "medicamento_id", nullable = false)
+    private Medicamento medicamento;
+
 
     /** Fecha y hora de creación del registro. */
     @Column(name = "fecha_creacion_registro")

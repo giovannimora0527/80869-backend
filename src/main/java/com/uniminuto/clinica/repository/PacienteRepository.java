@@ -20,5 +20,12 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long>{
     *
     * @return lista de pacientes ordenada por fecha de nacimiento ascendente
     */
+   /**
+    * Encuentra todos los pacientes ordenados por fecha de nacimiento
+    * de manera descendente (del mayor al menor).
+    *
+    * @return lista de pacientes ordenada por fecha de nacimiento descendente
+    */
+   List<Paciente> findAllByOrderByFechaNacimientoDesc();
    List<Paciente> findAllByOrderByFechaNacimientoAsc();
 }

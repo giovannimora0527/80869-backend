@@ -34,7 +34,7 @@ public class PacienteServiceImpl implements PacienteService {
      * {@inheritDoc}
      */
     @Override
-    public List<Paciente> listarPacientesMayorAMenorPorFechaNacimiento() {
-        return pacienteRepository.findAllByOrderByFechaNacimientoAsc();
+        public List<Paciente> listarPacientesMayorAMenorPorFechaNacimiento() {
+            return pacienteRepository.findAllByOrderByFechaNacimientoDesc();
     }
 }
