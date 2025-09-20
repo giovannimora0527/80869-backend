@@ -14,10 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
 
-/**
- *
- * @author dbaez
- */
 
 @Data
 @Entity

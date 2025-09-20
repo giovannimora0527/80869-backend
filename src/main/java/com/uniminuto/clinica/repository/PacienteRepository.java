@@ -17,6 +17,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
     
+    
+    // Aqui utilizamos listar de la tabla paciente que nos ordene las fechas 
+    //de manera Ascendente 
     List<Paciente> findAllByOrderByFechanacimiento();
     
     List<Paciente> findByNumerodocumento(String numerodocumento);
