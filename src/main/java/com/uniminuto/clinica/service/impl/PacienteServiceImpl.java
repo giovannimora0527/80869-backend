@@ -20,4 +20,9 @@ public class PacienteServiceImpl implements PacienteService {
     public List<Paciente> listarTodos() {
         return pacienteRepository.findAll();
     }
+
+    @Override
+    public List<Paciente> listarOrdenNacimientoDesc() {
+        return pacienteRepository.findAllByOrderByFechaNacimientoDesc();
+    }
 }
