@@ -2,6 +2,7 @@ package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.RecetaApi;
 import com.uniminuto.clinica.entity.Receta;
+import com.uniminuto.clinica.model.RecetaRq;
 import com.uniminuto.clinica.service.RecetaService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class RecetaApiController implements RecetaApi {
     @Autowired
     RecetaService recetaService;
     @Override
-    public ResponseEntity<String> guardarReceta(Receta receta) throws BadRequestException {
+    public ResponseEntity<String> guardarReceta(RecetaRq receta) throws BadRequestException {
         return ResponseEntity.ok(this.recetaService.guardarReceta(receta));
     }
 

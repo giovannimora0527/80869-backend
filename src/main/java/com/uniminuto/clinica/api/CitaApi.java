@@ -1,6 +1,7 @@
 package com.uniminuto.clinica.api;
 
 import com.uniminuto.clinica.entity.Cita;
+import com.uniminuto.clinica.model.CitaRq;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public interface CitaApi {
     @PostMapping(value = "/guardarCita",
             produces = {"application/json"},
             consumes = {"application/json"})
-    ResponseEntity<String> guardarCita(@RequestBody Cita cita) throws BadRequestException;
+    ResponseEntity<String> guardarCita(@RequestBody CitaRq cita) throws BadRequestException;
 
     /**
      * Lista las citas más recientes registradas en el sistema.

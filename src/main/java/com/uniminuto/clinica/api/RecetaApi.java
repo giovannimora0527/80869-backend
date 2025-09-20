@@ -2,6 +2,7 @@ package com.uniminuto.clinica.api;
 
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.entity.Receta;
+import com.uniminuto.clinica.model.RecetaRq;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public interface RecetaApi {
     @PostMapping(value = "/guardarReceta",
             produces = {"application/json"},
             consumes = {"application/json"})
-    ResponseEntity<String> guardarReceta(@RequestBody Receta receta) throws BadRequestException;
+    ResponseEntity<String> guardarReceta(@RequestBody RecetaRq receta) throws BadRequestException;
 
     /**
      * Lista todas las recetas médicas registradas en el sistema.

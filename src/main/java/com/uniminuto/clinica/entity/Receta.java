@@ -5,6 +5,7 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -17,7 +18,7 @@ public class Receta implements Serializable {
     @Column(name = "dosis")
     private String dosis;
     @Column(name = "fecha_registro")
-    private String fechaRegistro;
+    private LocalDateTime fechaRegistro;
     @Column(name = "indicaciones")
     @Nullable
     private String indicaciones;

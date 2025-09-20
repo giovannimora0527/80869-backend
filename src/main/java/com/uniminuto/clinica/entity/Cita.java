@@ -6,7 +6,7 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -27,7 +27,7 @@ public class Cita implements Serializable {
     private Medico medico;
 
     @Column(name = "fecha_hora")
-    private Date fechaHora;
+    private LocalDateTime fechaHora;
 
     @Column(name = "estado")
     private String estado;
