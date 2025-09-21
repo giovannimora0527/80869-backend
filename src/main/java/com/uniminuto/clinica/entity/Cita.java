@@ -44,6 +44,14 @@ public class Cita implements Serializable {
     /** Fecha y hora programada de la cita. */
     @Column(name = "fecha_hora")
     private LocalDateTime fechaHora;
+
+    /** Estado de la cita (programada, confirmada, cancelada, etc.). */
+    @Column(name = "estado")
+    private String estado;
+
+    /** Motivo de la cita. */
+    @Column(name = "motivo")
+    private String motivo;
 }
 
 

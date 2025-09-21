@@ -1,6 +1,8 @@
 package com.uniminuto.clinica.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +12,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 /**
- * Entidad básica para medicamento.
+ * Entidad que representa un medicamento en el inventario de la clínica.
  */
 @Data
 @Entity
@@ -31,4 +33,20 @@ public class Medicamento implements Serializable {
 
     @Column(name = "presentacion")
     private String presentacion;
+
+    /** Fecha de compra del medicamento. */
+    @Column(name = "fecha_compra")
+    private LocalDate fechaCompra;
+
+    /** Fecha de vencimiento del medicamento. */
+    @Column(name = "fecha_vence")
+    private LocalDate fechaVence;
+
+    /** Fecha de creación del registro. */
+    @Column(name = "fecha_creacion_registro")
+    private LocalDateTime fechaCreacionRegistro;
+
+    /** Fecha de modificación del registro. */
+    @Column(name = "fecha_modificacion_registro")
+    private LocalDateTime fechaModificacionRegistro;
 }
