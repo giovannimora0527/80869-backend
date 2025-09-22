@@ -1,0 +1,648 @@
+{
+	"info": {
+		"_postman_id": "recetas-listado-collection",
+		"name": "Servicio de Listado de Recetas",
+		"description": "Colección de pruebas para el servicio de listado de recetas médicas con filtros y paginación",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8081/clinica/v1",
+			"type": "string"
+		},
+		{
+			"key": "paciente_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "medico_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "medicamento_id",
+			"value": "1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Listados Básicos",
+			"item": [
+				{
+					"name": "Listar Todas las Recetas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/receta/listado",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							]
+						},
+						"description": "Lista todas las recetas con configuración por defecto (20 registros, ordenadas por fecha descendente)"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar con Paginación",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?pagina=0&tamano=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "pagina",
+									"value": "0"
+								},
+								{
+									"key": "tamano",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Lista recetas con paginación personalizada (10 por página)"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar con Ordenamiento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?ordenarPor=id&direccion=ASC",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "ordenarPor",
+									"value": "id"
+								},
+								{
+									"key": "direccion",
+									"value": "ASC"
+								}
+							]
+						},
+						"description": "Lista recetas ordenadas por ID ascendente"
+					},
+					"response": []
+				}
+			],
+			"description": "Casos básicos de listado de recetas"
+		},
+		{
+			"name": "Filtros por Entidad",
+			"item": [
+				{
+					"name": "Filtrar por Paciente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?pacienteId={{paciente_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "pacienteId",
+									"value": "{{paciente_id}}"
+								}
+							]
+						},
+						"description": "Lista recetas de un paciente específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Filtrar por Médico",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?medicoId={{medico_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "medicoId",
+									"value": "{{medico_id}}"
+								}
+							]
+						},
+						"description": "Lista recetas de un médico específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Filtrar por Medicamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?medicamentoId={{medicamento_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "medicamentoId",
+									"value": "{{medicamento_id}}"
+								}
+							]
+						},
+						"description": "Lista recetas que contienen un medicamento específico"
+					},
+					"response": []
+				}
+			],
+			"description": "Filtros por entidades específicas (paciente, médico, medicamento)"
+		},
+		{
+			"name": "Filtros por Fecha",
+			"item": [
+				{
+					"name": "Filtrar por Fecha Desde",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?fechaDesde=2024-01-01T00:00:00",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "fechaDesde",
+									"value": "2024-01-01T00:00:00"
+								}
+							]
+						},
+						"description": "Lista recetas creadas desde una fecha específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Filtrar por Rango de Fechas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?fechaDesde=2024-01-01T00:00:00&fechaHasta=2024-12-31T23:59:59",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "fechaDesde",
+									"value": "2024-01-01T00:00:00"
+								},
+								{
+									"key": "fechaHasta",
+									"value": "2024-12-31T23:59:59"
+								}
+							]
+						},
+						"description": "Lista recetas en un rango de fechas específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Últimos 7 Días",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?fechaDesde=2024-09-14T00:00:00",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "fechaDesde",
+									"value": "2024-09-14T00:00:00",
+									"description": "Cambiar por fecha de hace 7 días"
+								}
+							]
+						},
+						"description": "Lista recetas de los últimos 7 días"
+					},
+					"response": []
+				}
+			],
+			"description": "Filtros por fechas de creación de las recetas"
+		},
+		{
+			"name": "Búsqueda por Texto",
+			"item": [
+				{
+					"name": "Buscar en Dosis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?texto=500mg",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "texto",
+									"value": "500mg"
+								}
+							]
+						},
+						"description": "Busca recetas que contengan '500mg' en dosis o indicaciones"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Medicamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?texto=acetaminofen",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "texto",
+									"value": "acetaminofen"
+								}
+							]
+						},
+						"description": "Busca recetas que contengan 'acetaminofen' en dosis o indicaciones"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar en Indicaciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?texto=cada 8 horas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "texto",
+									"value": "cada 8 horas"
+								}
+							]
+						},
+						"description": "Busca recetas que contengan 'cada 8 horas' en indicaciones"
+					},
+					"response": []
+				}
+			],
+			"description": "Búsquedas de texto en campos de dosis e indicaciones"
+		},
+		{
+			"name": "Filtros Combinados",
+			"item": [
+				{
+					"name": "Paciente + Fecha",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?pacienteId={{paciente_id}}&fechaDesde=2024-01-01T00:00:00",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "pacienteId",
+									"value": "{{paciente_id}}"
+								},
+								{
+									"key": "fechaDesde",
+									"value": "2024-01-01T00:00:00"
+								}
+							]
+						},
+						"description": "Combina filtro de paciente con rango de fechas"
+					},
+					"response": []
+				},
+				{
+					"name": "Médico + Medicamento + Paginación",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?medicoId={{medico_id}}&medicamentoId={{medicamento_id}}&pagina=0&tamano=5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "medicoId",
+									"value": "{{medico_id}}"
+								},
+								{
+									"key": "medicamentoId",
+									"value": "{{medicamento_id}}"
+								},
+								{
+									"key": "pagina",
+									"value": "0"
+								},
+								{
+									"key": "tamano",
+									"value": "5"
+								}
+							]
+						},
+						"description": "Combina múltiples filtros con paginación personalizada"
+					},
+					"response": []
+				},
+				{
+					"name": "Filtro Completo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listado?pacienteId={{paciente_id}}&medicoId={{medico_id}}&fechaDesde=2024-01-01T00:00:00&fechaHasta=2024-12-31T23:59:59&texto=500&pagina=0&tamano=10&ordenarPor=fechaCreacionRegistro&direccion=DESC",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listado"
+							],
+							"query": [
+								{
+									"key": "pacienteId",
+									"value": "{{paciente_id}}"
+								},
+								{
+									"key": "medicoId",
+									"value": "{{medico_id}}"
+								},
+								{
+									"key": "fechaDesde",
+									"value": "2024-01-01T00:00:00"
+								},
+								{
+									"key": "fechaHasta",
+									"value": "2024-12-31T23:59:59"
+								},
+								{
+									"key": "texto",
+									"value": "500"
+								},
+								{
+									"key": "pagina",
+									"value": "0"
+								},
+								{
+									"key": "tamano",
+									"value": "10"
+								},
+								{
+									"key": "ordenarPor",
+									"value": "fechaCreacionRegistro"
+								},
+								{
+									"key": "direccion",
+									"value": "DESC"
+								}
+							]
+						},
+						"description": "Ejemplo con todos los filtros y parámetros disponibles"
+					},
+					"response": []
+				}
+			],
+			"description": "Combinaciones de múltiples filtros"
+		},
+		{
+			"name": "Endpoints Específicos",
+			"item": [
+				{
+					"name": "Recetas por Paciente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/paciente/{{paciente_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"paciente",
+								"{{paciente_id}}"
+							]
+						},
+						"description": "Endpoint dedicado para recetas de un paciente específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Recetas por Paciente con Paginación",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/paciente/{{paciente_id}}?pagina=0&tamano=15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"paciente",
+								"{{paciente_id}}"
+							],
+							"query": [
+								{
+									"key": "pagina",
+									"value": "0"
+								},
+								{
+									"key": "tamano",
+									"value": "15"
+								}
+							]
+						},
+						"description": "Recetas de paciente con paginación personalizada"
+					},
+					"response": []
+				},
+				{
+					"name": "Recetas por Médico",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/medico/{{medico_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"medico",
+								"{{medico_id}}"
+							]
+						},
+						"description": "Endpoint dedicado para recetas de un médico específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Recetas por Médico con Paginación",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/medico/{{medico_id}}?pagina=0&tamano=25",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"medico",
+								"{{medico_id}}"
+							],
+							"query": [
+								{
+									"key": "pagina",
+									"value": "0"
+								},
+								{
+									"key": "tamano",
+									"value": "25"
+								}
+							]
+						},
+						"description": "Recetas de médico con paginación personalizada"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints especializados para consultas específicas"
+		},
+		{
+			"name": "Endpoints Legacy",
+			"item": [
+				{
+					"name": "Listar Recetas (Método Anterior)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listar"
+							]
+						},
+						"description": "Método anterior de listado (sin paginación ni filtros)"
+					},
+					"response": []
+				},
+				{
+					"name": "Validar Cita para Receta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/validar-cita/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"validar-cita",
+								"1"
+							]
+						},
+						"description": "Valida si una cita puede tener receta"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints existentes del sistema anterior"
+		}
+	]
+}

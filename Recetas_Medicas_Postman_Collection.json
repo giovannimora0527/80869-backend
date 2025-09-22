@@ -1,0 +1,315 @@
+{
+	"info": {
+		"_postman_id": "recetas-medicas-collection",
+		"name": "Servicio de Recetas Médicas",
+		"description": "Colección de pruebas para el servicio de recetas médicas de la clínica",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		},
+		{
+			"key": "cita_id_valida",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "cita_id_invalida",
+			"value": "99999",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Casos Exitosos",
+			"item": [
+				{
+					"name": "Crear Receta Simple",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"citaId\": {{cita_id_valida}},\n  \"medicamentos\": [\n    {\n      \"medicamentoId\": 1,\n      \"nombre\": \"Acetaminofén\",\n      \"dosis\": \"500mg\",\n      \"frecuencia\": \"Cada 8 horas\",\n      \"duracionDias\": 7,\n      \"indicaciones\": \"Tomar con alimentos\"\n    }\n  ],\n  \"observaciones\": \"Paciente presenta dolor leve\",\n  \"indicacionesGenerales\": \"Completar el tratamiento\",\n  \"duracionTotalTratamiento\": 7\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/receta/crear-completa",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"crear-completa"
+							]
+						},
+						"description": "Crea una receta simple con un medicamento"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Receta Múltiples Medicamentos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"citaId\": {{cita_id_valida}},\n  \"medicamentos\": [\n    {\n      \"medicamentoId\": 1,\n      \"nombre\": \"Acetaminofén\",\n      \"dosis\": \"500mg\",\n      \"frecuencia\": \"Cada 8 horas\",\n      \"duracionDias\": 7,\n      \"indicaciones\": \"Tomar con alimentos\"\n    },\n    {\n      \"medicamentoId\": 2,\n      \"nombre\": \"Ibuprofeno\",\n      \"dosis\": \"400mg\",\n      \"frecuencia\": \"Cada 12 horas\",\n      \"duracionDias\": 5,\n      \"indicaciones\": \"Tomar después de las comidas\"\n    },\n    {\n      \"nombre\": \"Vitamina C\",\n      \"dosis\": \"1g\",\n      \"frecuencia\": \"Una vez al día\",\n      \"duracionDias\": 30,\n      \"indicaciones\": \"Preferiblemente en la mañana\"\n    }\n  ],\n  \"observaciones\": \"Paciente con síntomas de gripe\",\n  \"indicacionesGenerales\": \"Mantener reposo y hidratación\",\n  \"duracionTotalTratamiento\": 7\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/receta/crear-completa",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"crear-completa"
+							]
+						},
+						"description": "Crea una receta con múltiples medicamentos incluyendo uno sin ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Validar Cita para Receta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/validar-cita/{{cita_id_valida}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"validar-cita",
+								"{{cita_id_valida}}"
+							]
+						},
+						"description": "Valida si una cita está en estado apropiado para crear receta"
+					},
+					"response": []
+				}
+			],
+			"description": "Casos de prueba que deben ejecutarse exitosamente"
+		},
+		{
+			"name": "Casos de Error",
+			"item": [
+				{
+					"name": "Cita No Encontrada (404)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"citaId\": {{cita_id_invalida}},\n  \"medicamentos\": [\n    {\n      \"medicamentoId\": 1,\n      \"nombre\": \"Acetaminofén\",\n      \"dosis\": \"500mg\",\n      \"frecuencia\": \"Cada 8 horas\",\n      \"duracionDias\": 7,\n      \"indicaciones\": \"Tomar con alimentos\"\n    }\n  ],\n  \"observaciones\": \"Test de cita inexistente\",\n  \"indicacionesGenerales\": \"Test\",\n  \"duracionTotalTratamiento\": 7\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/receta/crear-completa",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"crear-completa"
+							]
+						},
+						"description": "Debe retornar 404 cuando la cita no existe"
+					},
+					"response": []
+				},
+				{
+					"name": "Datos Inválidos - Cita Null (400)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"citaId\": null,\n  \"medicamentos\": [\n    {\n      \"medicamentoId\": 1,\n      \"nombre\": \"Acetaminofén\",\n      \"dosis\": \"500mg\",\n      \"frecuencia\": \"Cada 8 horas\",\n      \"duracionDias\": 7,\n      \"indicaciones\": \"Tomar con alimentos\"\n    }\n  ],\n  \"observaciones\": \"Test de validación\",\n  \"indicacionesGenerales\": \"Test\",\n  \"duracionTotalTratamiento\": 7\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/receta/crear-completa",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"crear-completa"
+							]
+						},
+						"description": "Debe retornar 400 cuando citaId es null"
+					},
+					"response": []
+				},
+				{
+					"name": "Medicamentos Vacíos (400)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"citaId\": {{cita_id_valida}},\n  \"medicamentos\": [],\n  \"observaciones\": \"Test de medicamentos vacíos\",\n  \"indicacionesGenerales\": \"Test\",\n  \"duracionTotalTratamiento\": 7\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/receta/crear-completa",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"crear-completa"
+							]
+						},
+						"description": "Debe retornar 400 cuando no hay medicamentos"
+					},
+					"response": []
+				},
+				{
+					"name": "Medicamento Datos Inválidos (400)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"citaId\": {{cita_id_valida}},\n  \"medicamentos\": [\n    {\n      \"medicamentoId\": 1,\n      \"nombre\": \"\",\n      \"dosis\": \"\",\n      \"frecuencia\": \"\",\n      \"duracionDias\": -1,\n      \"indicaciones\": \"\"\n    }\n  ],\n  \"observaciones\": \"Test de datos inválidos\",\n  \"indicacionesGenerales\": \"Test\",\n  \"duracionTotalTratamiento\": 7\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/receta/crear-completa",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"crear-completa"
+							]
+						},
+						"description": "Debe retornar 400 cuando los datos del medicamento son inválidos"
+					},
+					"response": []
+				},
+				{
+					"name": "Validar Cita Inexistente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/validar-cita/{{cita_id_invalida}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"validar-cita",
+								"{{cita_id_invalida}}"
+							]
+						},
+						"description": "Valida una cita que no existe - debe retornar false o error"
+					},
+					"response": []
+				}
+			],
+			"description": "Casos de prueba que deben generar errores específicos"
+		},
+		{
+			"name": "Endpoints Existentes",
+			"item": [
+				{
+					"name": "Listar Recetas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/receta/listar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"listar"
+							]
+						},
+						"description": "Lista todas las recetas existentes"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Receta Legacy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": null,\n  \"medicamentos\": \"Acetaminofén 500mg\",\n  \"indicaciones\": \"Tomar cada 8 horas\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/receta/crear",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"receta",
+								"crear"
+							]
+						},
+						"description": "Método legacy para crear recetas simples"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints que ya existían en el sistema"
+		}
+	]
+}

@@ -1,0 +1,641 @@
+{
+	"info": {
+		"_postman_id": "12345678-1234-1234-1234-123456789abc",
+		"name": "Clínica API - Servicio de Citas",
+		"description": "Colección de pruebas para el servicio de creación de citas con validaciones completas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Crear Cita Exitosa",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Response has citaId\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('citaId');",
+							"});",
+							"",
+							"pm.test(\"Response has mensaje\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.mensaje).to.eql('Cita creada exitosamente');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"pacienteId\": 1,\n  \"medicoId\": 1,\n  \"fechaHora\": \"2025-01-15T10:00:00\",\n  \"motivo\": \"Consulta general de seguimiento\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cita/crear-con-validaciones",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cita",
+						"crear-con-validaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Error - Paciente No Encontrado",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Error message contains PACIENTE_NO_ENCONTRADO\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.include('PACIENTE_NO_ENCONTRADO');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"pacienteId\": 999,\n  \"medicoId\": 1,\n  \"fechaHora\": \"2025-01-15T10:00:00\",\n  \"motivo\": \"Consulta de prueba\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cita/crear-con-validaciones",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cita",
+						"crear-con-validaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Error - Médico No Encontrado",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Error message contains MEDICO_NO_ENCONTRADO\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.include('MEDICO_NO_ENCONTRADO');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"pacienteId\": 1,\n  \"medicoId\": 999,\n  \"fechaHora\": \"2025-01-15T10:00:00\",\n  \"motivo\": \"Consulta de prueba\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cita/crear-con-validaciones",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cita",
+						"crear-con-validaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Error - Horario Fin de Semana",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Error message contains HORARIO_NO_VALIDO\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.include('HORARIO_NO_VALIDO');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"pacienteId\": 1,\n  \"medicoId\": 1,\n  \"fechaHora\": \"2025-01-18T10:00:00\",\n  \"motivo\": \"Consulta de fin de semana\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cita/crear-con-validaciones",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cita",
+						"crear-con-validaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Error - Horario Fuera de Rango",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Error message contains HORARIO_NO_VALIDO\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.include('HORARIO_NO_VALIDO');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"pacienteId\": 1,\n  \"medicoId\": 1,\n  \"fechaHora\": \"2025-01-15T19:00:00\",\n  \"motivo\": \"Consulta nocturna\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cita/crear-con-validaciones",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cita",
+						"crear-con-validaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Error - Validación de Campos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Error message contains ERROR_VALIDACION\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.include('ERROR_VALIDACION');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"pacienteId\": null,\n  \"medicoId\": 1,\n  \"fechaHora\": \"2024-01-15T10:00:00\",\n  \"motivo\": \"\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cita/crear-con-validaciones",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cita",
+						"crear-con-validaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. Listar Pacientes (Verificar Datos)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/paciente/listar",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"paciente",
+						"listar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8. Listar Citas - Básico (Sin Filtros)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has citas array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('citas');",
+							"    pm.expect(jsonData.citas).to.be.an('array');",
+							"});",
+							"",
+							"pm.test(\"Response has pagination metadata\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('paginacion');",
+							"    pm.expect(jsonData.paginacion).to.have.property('paginaActual');",
+							"    pm.expect(jsonData.paginacion).to.have.property('totalElementos');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/cita/listar",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cita",
+						"listar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "9. Listar Citas - Con Paginación",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Pagination works correctly\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.paginacion.paginaActual).to.eql(1);",
+							"    pm.expect(jsonData.paginacion.tamanoPagina).to.eql(5);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/cita/listar?page=1&size=5",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"citas",
+						"listar"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "size",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10. Listar Citas - Con Filtro por Médico",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Filter by medico works\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.filtrosAplicados.medicoId).to.eql(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/cita/listar?medicoId=1&size=10",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"citas",
+						"listar"
+					],
+					"query": [
+						{
+							"key": "medicoId",
+							"value": "1"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11. Listar Citas - Con Filtro por Fechas",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Date filter applied\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.filtrosAplicados).to.have.property('desde');",
+							"    pm.expect(jsonData.filtrosAplicados).to.have.property('hasta');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/cita/listar?desde=2025-01-01&hasta=2025-12-31",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"citas",
+						"listar"
+					],
+					"query": [
+						{
+							"key": "desde",
+							"value": "2025-01-01"
+						},
+						{
+							"key": "hasta",
+							"value": "2025-12-31"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12. Listar Citas - Con Ordenamiento",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Sorting applied correctly\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.filtrosAplicados.ordenarPor).to.eql('fechaHora');",
+							"    pm.expect(jsonData.filtrosAplicados.direccion).to.eql('asc');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/cita/listar?ordenarPor=fechaHora&direccion=asc",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"citas",
+						"listar"
+					],
+					"query": [
+						{
+							"key": "ordenarPor",
+							"value": "fechaHora"
+						},
+						{
+							"key": "direccion",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13. Listar Citas - Validación Error (Página Inválida)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Error message for invalid page\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.include('página');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/cita/listar?page=-1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"citas",
+						"listar"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "-1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "3f089a0c-42e5-4dc6-85ce-e256731b3384",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "user",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8081/clinica/v1",
+			"type": "string"
+		}
+	]
+}
