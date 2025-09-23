@@ -31,7 +31,7 @@ public class CitaServiceImpl implements CitaService {
 
     @Override
     public List<Cita> obtenerTodasLasCitas() {
-        return this.citaRepository.findAllByOrderByFechaDesc();
+        return this.citaRepository.findAllByOrderByFechaHoraDesc();
     }
 
     @Override
