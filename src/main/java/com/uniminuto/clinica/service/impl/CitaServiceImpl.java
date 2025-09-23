@@ -47,14 +47,14 @@ public class CitaServiceImpl implements CitaService {
 
         LocalDateTime fechaInicioCita = LocalDateTime.parse(citaRq.getFechaHora());
         LocalDateTime fechaFinCita = fechaInicioCita.plusMinutes(15);
-        List<Cita> citasExistentesMedico = this.citaRepository.findByMedicoAndFechaBetween(
+        List<Cita> citasExistentesMedico = this.citaRepository.findByMedicoAndFechaHoraBetween(
                 optMedico.get(), fechaInicioCita, fechaFinCita);
         if (citasExistentesMedico != null && !citasExistentesMedico.isEmpty()) {
             throw new BadRequestException("El medico con ID " + citaRq.getMedicoId() +
                     " ya tiene una cita agendada en el horario solicitado");
         }
 
-        List<Cita> citasExistentesPaciente = this.citaRepository.findByPacienteAndFechaBetween(
+        List<Cita> citasExistentesPaciente = this.citaRepository.findByPacienteAndFechaHoraBetween(
                 optPaciente.get(), fechaInicioCita, fechaFinCita);
         if (citasExistentesPaciente.isEmpty()) {
             throw new BadRequestException("El paciente con ID " + citaRq.getPacienteId() +
