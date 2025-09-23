@@ -34,4 +34,9 @@ public class PacienteServiceImpl implements PacienteService {
         return optPaciente.get();
     }
 
+    @Override
+    public List<Paciente> listarPacientesOrdenadoPorFechaNacimiento() {
+        return this.pacienteRepository.findAllByOrderByFechaNacimientoAsc();
+    }
+
 }

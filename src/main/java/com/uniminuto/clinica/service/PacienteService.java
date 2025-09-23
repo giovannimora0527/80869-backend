@@ -13,4 +13,6 @@ public interface PacienteService {
     List<Paciente> listarPacientes();
     
     Paciente buscarPorDocumento (String documento) throws BadRequestException;
+
+    List<Paciente> listarPacientesOrdenadoPorFechaNacimiento();
 }

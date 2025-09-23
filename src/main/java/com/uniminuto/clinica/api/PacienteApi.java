@@ -30,4 +30,10 @@ public interface PacienteApi {
             method = RequestMethod.GET)
     ResponseEntity<Paciente> buscarPacientePorDoc(
             @RequestParam String numeroDocumento) throws BadRequestException;
+
+    @RequestMapping(value = "/listar-ordenado-nacimiento",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Paciente>> listarPacientesOrdenado() throws BadRequestException;
 }
