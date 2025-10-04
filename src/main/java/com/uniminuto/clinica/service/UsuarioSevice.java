@@ -20,7 +20,7 @@ public interface UsuarioSevice {
     List<Usuario> encontrarPorActivo(boolean activo);
     
     RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
-    
-    
+
+    RespuestaRs actualizarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
     
 }

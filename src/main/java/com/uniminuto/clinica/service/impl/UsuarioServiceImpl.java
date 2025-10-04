@@ -74,7 +74,40 @@ public class UsuarioServiceImpl implements UsuarioSevice {
         respuesta.setStatus(200);
         return respuesta;
     }
-    
+
+    @Override
+    public RespuestaRs actualizarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException {
+        Optional<Usuario> optUser = this.usuarioRepository
+                .findById(usuarioNuevo.getId());
+        if (optUser.isEmpty()) {
+           throw new BadRequestException("No se encontro el usuario a actualizar.");
+        }
+
+        Usuario userAActualizar = optUser.get();
+        // Si el nombre de usuario cambia voy y busco que no haya usuarios con ese nombre.
+        if (!userAActualizar.getUsername().toLowerCase()
+                .equals(usuarioNuevo.getUsername().toLowerCase())) {
+            Optional<Usuario> optUserByUsername = this.usuarioRepository
+                    .findByUsername(usuarioNuevo.getUsername().toLowerCase());
+            if (optUserByUsername.isPresent()) {
+                throw new BadRequestException("El usuario con el username: "
+                        + usuarioNuevo.getUsername() +"  ya existe.");
+            }
+        }
+
+        userAActualizar.setUsername(usuarioNuevo.getUsername().toLowerCase());
+        userAActualizar.setActivo(usuarioNuevo.isActivo());
+        userAActualizar.setRol(usuarioNuevo.getRol().toUpperCase());
+        userAActualizar.setFechaCreacion(LocalDateTime.now());
+        userAActualizar.setPassword(this.encriptarPassword(usuarioNuevo.getPass()));
+        this.usuarioRepository.save(userAActualizar);
+
+        RespuestaRs rta = new RespuestaRs();
+        rta.setStatus(200);
+        rta.setMensaje("Se ha actualizado el usuario correctamente.");
+        return rta;
+    }
+
     private void guardarUsuarioNuevo(UsuarioRq usuarioNuevo) {
         Usuario nuevo = new Usuario();
         nuevo.setActivo(true);
