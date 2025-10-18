@@ -50,14 +50,8 @@ public class PacienteServiceImpl implements PacienteService {
         return optPaciente.get();
     }
 
-    /**
-     * Lista todos los pacientes ordenados por fecha de nacimiento en orden ascendente.
-     * (Es decir, primero los de mayor edad).
-     *
-     * @return Lista de pacientes ordenados por fecha de nacimiento.
-     */
     @Override
-    public List<Paciente> listarPacientesPorEdadMayor() {
+    public List<Paciente> listarPacientesOrdenadoPorFechaNacimiento() {
         return this.pacienteRepository.findAllByOrderByFechaNacimientoAsc();
     }
 

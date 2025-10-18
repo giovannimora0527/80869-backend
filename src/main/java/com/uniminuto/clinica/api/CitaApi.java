@@ -1,43 +1,35 @@
 package com.uniminuto.clinica.api;
 
 import com.uniminuto.clinica.entity.Cita;
+import com.uniminuto.clinica.entity.Medico;
 import com.uniminuto.clinica.model.CitaRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.validation.Valid;
 import java.util.List;
 
-/**
- * API REST para la gestión de citas médicas.
- * Proporciona endpoints para guardar nuevas citas y listar citas recientes.
- */
 @CrossOrigin(origins = "*")
-@RequestMapping(value = "/cita")
+@RequestMapping("/cita")
 public interface CitaApi {
 
-    /**
-     * Guarda una nueva cita médica en el sistema.
-     *
-     * @param cita Objeto {@link Cita} que contiene la información de la cita a guardar.
-     * @return {@link ResponseEntity} con un mensaje de confirmación o error.
-     * @throws BadRequestException si la solicitud contiene datos inválidos.
-     *
-     */
-    @PostMapping(value = "/guardarCita",
+    @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"})
-    ResponseEntity<String> guardarCita(@RequestBody CitaRq cita) throws BadRequestException;
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Cita>> listarCitas();
 
-    /**
-     * Lista las citas más recientes registradas en el sistema.
-     *
-     * @return {@link ResponseEntity} que contiene una lista de objetos {@link Cita}.
-     *
-     */
-    @GetMapping(value = "/listarRecientes",
+
+    @RequestMapping(value = "/guardar",
             produces = {"application/json"},
-            consumes = {"application/json"})
-    ResponseEntity<List<Cita>> listarRecientes();
-
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<RespuestaRs> guardarCita(
+            @RequestBody @Valid CitaRq citaRq
+            ) throws BadRequestException;
 }

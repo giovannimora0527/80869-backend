@@ -41,16 +41,10 @@ public interface PacienteApi {
             method = RequestMethod.GET)
     ResponseEntity<Paciente> buscarPacientePorDoc(
             @RequestParam String numeroDocumento) throws BadRequestException;
-    /**
-     * Lista pacientes filtrados por edad.
-     * (La lógica de filtrado por edad debe ser implementada en el servicio).
-     *
-     * @return {@link ResponseEntity} que contiene una lista de objetos {@link Paciente}.
-     * @throws BadRequestException si ocurre un error al procesar la solicitud.
-     *
-     */
-    @GetMapping(value = "/listar-x-edad",
+
+    @RequestMapping(value = "/listar-ordenado-nacimiento",
             produces = {"application/json"},
-            consumes = {"application/json"})
-    ResponseEntity<List<Paciente>> listarPacientesPorEdad() throws BadRequestException;
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Paciente>> listarPacientesOrdenado() throws BadRequestException;
 }

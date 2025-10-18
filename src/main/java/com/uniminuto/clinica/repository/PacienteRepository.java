@@ -16,5 +16,6 @@ public interface PacienteRepository  extends JpaRepository<Paciente, Long> {
     
      Optional<Paciente> findByNumeroDocumento(String documento);
 
-     List<Paciente>findAllByOrderByFechaNacimientoAsc();
+     List<Paciente> findAllByOrderByFechaNacimientoAsc();
+    
 }

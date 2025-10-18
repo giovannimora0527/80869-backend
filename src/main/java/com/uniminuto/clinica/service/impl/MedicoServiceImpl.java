@@ -2,6 +2,8 @@ package com.uniminuto.clinica.service.impl;
 
 import com.uniminuto.clinica.entity.Especializacion;
 import com.uniminuto.clinica.entity.Medico;
+import com.uniminuto.clinica.model.MedicoRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.repository.EspecialidadRepository;
 import com.uniminuto.clinica.repository.MedicoRepository;
 import com.uniminuto.clinica.service.MedicoService;
@@ -65,5 +67,45 @@ public class MedicoServiceImpl implements MedicoService {
         // Paso 4. Devolver el resultado
         return optMedico.get();
     }
+
+    @Override
+    public RespuestaRs guardarMedico(MedicoRq medicoRq) throws BadRequestException {
+        // Paso 1. Validar que no exista un medico con el mismo numero de documento
+        Optional<Medico> optMedico = this.medicoRepository
+                .findByNumeroDocumento(medicoRq.getNumeroDocumento());
+        if (optMedico.isPresent()) {
+            throw new BadRequestException("Ya existe un medico con el mismo numero de documento");
+        }
+        // Paso 2. Validar que no exista un medico con el mismo registro profesional
+        optMedico = this.medicoRepository.findByRegistroProfesional(medicoRq.getRegistroProfesional());
+        if (optMedico.isPresent()) {
+            throw new BadRequestException("Ya existe un medico con el mismo numero de registro profesional");
+        }
+
+        Optional<Especializacion> optEspecializacion = this.especialidadRepository
+                .findById(medicoRq.getEspecializacion());
+        if (optEspecializacion.isEmpty()) {
+            throw new BadRequestException("No existe la especializacion indicada");
+        }
+
+        Medico medicoGuardar = this.convertir(medicoRq, optEspecializacion.get());
+        this.medicoRepository.save(medicoGuardar);
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Se ha guardado el medico correctamente");
+        return rta;
+    }
+
+    private Medico convertir(MedicoRq medicoRq, Especializacion especializacion) {
+        Medico medico = new Medico();
+        medico.setNombres(medicoRq.getNombres());
+        medico.setApellidos(medicoRq.getApellidos());
+        medico.setTipoDocumento(medicoRq.getTipoDocumento());
+        medico.setNumeroDocumento(medicoRq.getNumeroDocumento());
+        medico.setRegistroProfesional(medicoRq.getRegistroProfesional());
+        medico.setEspecializacion(especializacion);
+        medico.setTelefono(medicoRq.getTelefono());
+        return medico;
+    }
+
 
 }

@@ -1,16 +1,20 @@
 package com.uniminuto.clinica.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class RecetaRq {
-    private String dosis;
-    private String indicaciones;
+    @NotNull(message = "El campo citaId es obligatorio")
     private Integer citaId;
-    private Long medicamentoId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime fechaRegistro;
+
+    @NotNull(message = "El campo medicamentoId es obligatorio")
+    private Integer medicamentoId;
+
+    @NotNull(message = "El campo dosis es obligatorio")
+    private String dosis;
+
+    @NotNull(message = "El campo indicaciones es obligatorio")
+    private String indicaciones;
 }

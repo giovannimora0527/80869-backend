@@ -60,7 +60,16 @@ public interface UsuarioApi {
             method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> guardarUsuarioNuevo(
             @RequestBody UsuarioRq usuario
-    ) throws BadRequestException;       
+    ) throws BadRequestException;
+
+
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<RespuestaRs> actualizarUsuario(
+            @RequestBody UsuarioRq usuario
+    ) throws BadRequestException;
 }
 
 

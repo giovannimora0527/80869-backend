@@ -32,9 +32,9 @@ public class PacienteApiController implements PacienteApi {
     }
 
     @Override
-    public ResponseEntity<List<Paciente>> listarPacientesPorEdad() throws BadRequestException {
+    public ResponseEntity<List<Paciente>> listarPacientesOrdenado() throws BadRequestException {
         return ResponseEntity.ok(this.pacienteService
-                .listarPacientesPorEdadMayor());
+                .listarPacientesOrdenadoPorFechaNacimiento());
     }
 
 }

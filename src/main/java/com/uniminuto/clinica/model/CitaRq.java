@@ -1,17 +1,23 @@
 package com.uniminuto.clinica.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class CitaRq {
-    private String estado;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime fechaHora;
+    @NotNull(message = "El campo medicoId es obligatorio")
     private Long medicoId;
+
+    @NotNull(message = "El campo pacienteId es obligatorio")
     private Long pacienteId;
+
+    @NotNull(message = "El campo fechaHora es obligatorio")
+    private String fechaHora;
+
+    @NotNull(message = "El campo estado es obligatorio")
+    private String estado;
+
+    @NotNull(message = "El campo motivo es obligatorio")
     private String motivo;
 }

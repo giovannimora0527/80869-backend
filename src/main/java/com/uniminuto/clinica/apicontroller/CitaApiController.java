@@ -3,6 +3,7 @@ package com.uniminuto.clinica.apicontroller;
 import com.uniminuto.clinica.api.CitaApi;
 import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.model.CitaRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.service.CitaService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +14,17 @@ import java.util.List;
 
 @RestController
 public class CitaApiController implements CitaApi {
+
     @Autowired
-    CitaService citaService;
+    private CitaService citaService;
+
     @Override
-    public ResponseEntity<String> guardarCita(CitaRq cita) throws BadRequestException {
-        return ResponseEntity.ok(this.citaService.guardarCita(cita));
+    public ResponseEntity<List<Cita>> listarCitas() {
+        return ResponseEntity.ok(this.citaService.obtenerTodasLasCitas());
     }
 
     @Override
-    public ResponseEntity<List<Cita>> listarRecientes() {
-        return ResponseEntity.ok(this.citaService.listarReciente());
+    public ResponseEntity<RespuestaRs> guardarCita(CitaRq citaRq) throws BadRequestException {
+        return ResponseEntity.ok(this.citaService.guardarCita(citaRq));
     }
 }

@@ -1,27 +1,66 @@
 package com.uniminuto.clinica.entity;
 
 import lombok.Data;
-import org.hibernate.tuple.GeneratedValueGeneration;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "medicamento")
 public class Medicamento implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Identificador único del medicamento.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private long id;
-    @Column(name = "nombre")
+    @Column(name = "id", nullable = false, unique = true)
+    private Integer id;
+
+    /**
+     * Nombre del medicamento.
+     */
+    @Column(name = "nombre", length = 100, nullable = false, unique = true)
     private String nombre;
-    @Column(name = "descripcion")
-    @Nullable
+
+    /**
+     * Descripción del medicamento.
+     */
+    @Column(name = "descripcion", columnDefinition = "text")
     private String descripcion;
-    @Column(name = "presentacion")
-    @Nullable
+
+    /**
+     * Presentación del medicamento.
+     */
+    @Column(name = "presentacion", length = 100)
     private String presentacion;
 
+    /**
+     * Fecha de compra del medicamento.
+     */
+    @Column(name = "fecha_compra", nullable = false)
+    private LocalDate fechaCompra;
+
+    /**
+     * Fecha de vencimiento del medicamento.
+     */
+    @Column(name = "fecha_vence", nullable = false)
+    private LocalDate fechaVence;
+
+    /**
+     * Fecha de creación del registro.
+     */
+    @Column(name = "fecha_creacion_registro", nullable = false)
+    private LocalDateTime fechaCreacionRegistro;
+
+    /**
+     * Fecha de modificación del registro.
+     */
+    @Column(name = "fecha_modificacion_registro")
+    private LocalDateTime fechaModificacionRegistro;
 }

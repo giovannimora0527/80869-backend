@@ -4,6 +4,7 @@ import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.entity.Medico;
 import com.uniminuto.clinica.entity.Paciente;
 import com.uniminuto.clinica.model.CitaRq;
+import com.uniminuto.clinica.model.RespuestaRs;
 import com.uniminuto.clinica.repository.CitaRepository;
 import com.uniminuto.clinica.repository.MedicoRepository;
 import com.uniminuto.clinica.repository.PacienteRepository;
@@ -12,68 +13,71 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Implementación de la interfaz {@link CitaService}.
- * Contiene la lógica de negocio para el manejo de citas médicas,
- * incluyendo el almacenamiento y la consulta de citas recientes.
- */
 @Service
 public class CitaServiceImpl implements CitaService {
-    @Autowired
-    CitaRepository citaRepository;
-    @Autowired
-    MedicoRepository medicoRepository;
-    @Autowired
-    PacienteRepository pacienteRepository;
 
-    /**
-     * Guarda una nueva cita médica en la base de datos.
-     *
-     * @param citaRq Objeto {@link CitaRq} que contiene los datos de la cita a guardar.
-     * @return Mensaje indicando si la operación fue exitosa.
-     * @throws BadRequestException si ocurre un error al guardar la cita.
-     */
+    @Autowired
+    private CitaRepository citaRepository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private MedicoRepository medicoRepository;
+
     @Override
-    public String guardarCita(CitaRq citaRq) throws BadRequestException {
+    public List<Cita> obtenerTodasLasCitas() {
+        return this.citaRepository.findAllByOrderByFechaHoraDesc();
+    }
+
+    @Override
+    public RespuestaRs guardarCita(CitaRq citaRq) throws BadRequestException {
+        Optional<Paciente> optPaciente = this.pacienteRepository.findById(citaRq.getPacienteId());
+        if (optPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente con ID " + citaRq.getPacienteId() + " no existe");
+        }
+        Optional<Medico> optMedico = this.medicoRepository.findById(citaRq.getMedicoId());
+        if (optMedico.isEmpty()) {
+            throw new BadRequestException("El medico con ID " + citaRq.getPacienteId() + " no existe");
+        }
+
+        LocalDateTime fechaInicioCita = LocalDateTime.parse(citaRq.getFechaHora());
+        LocalDateTime fechaFinCita = fechaInicioCita.plusMinutes(15);
+        List<Cita> citasExistentesMedico = this.citaRepository.findByMedicoAndFechaHoraBetween(
+                optMedico.get(), fechaInicioCita, fechaFinCita);
+        if (citasExistentesMedico != null && !citasExistentesMedico.isEmpty()) {
+            throw new BadRequestException("El medico con ID " + citaRq.getMedicoId() +
+                    " ya tiene una cita agendada en el horario solicitado");
+        }
+
+        List<Cita> citasExistentesPaciente = this.citaRepository.findByPacienteAndFechaHoraBetween(
+                optPaciente.get(), fechaInicioCita, fechaFinCita);
+        if (citasExistentesPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente con ID " + citaRq.getPacienteId() +
+                    " ya tiene una cita agendada en el horario solicitado");
+        }
+
+        Cita citaAGuardar = this.converterCitaRqToCita(citaRq, optPaciente.get(), optMedico.get());
+        this.citaRepository.save(citaAGuardar);
+        RespuestaRs respuesta = new RespuestaRs();
+        respuesta.setStatus(200);
+        respuesta.setMensaje("Cita creada exitosamente");
+        return respuesta;
+    }
+
+
+    private Cita converterCitaRqToCita(CitaRq citaRq, Paciente paciente, Medico medico) {
         Cita cita = new Cita();
-        if(citaRq.getMedicoId() == null){
-            throw new BadRequestException("Error al guardar Cita: debe relacionar el Id del médico.");
-        }
-        if(citaRq.getPacienteId() == null){
-            throw new BadRequestException("Error al guardar Cita: debe relacionar el Id del paciente.");
-        }
-        Optional<Medico> medicoOpt = this.medicoRepository.findById(citaRq.getMedicoId());
-        if(!medicoOpt.isPresent()){
-            throw new BadRequestException("Error al guardar Cita: No existe el médico relacionado.");
-        }else{
-            cita.setMedico(medicoOpt.get());
-        }
-
-        Optional<Paciente> pacienteOpt = this.pacienteRepository.findById(citaRq.getPacienteId());
-        if(!pacienteOpt.isPresent()){
-            throw new BadRequestException("Error al guardar Cita: No existe el paciente relacionado.");
-        }else{
-            cita.setPaciente(pacienteOpt.get());
-        }
-        cita.setEstado(citaRq.getEstado());
+        cita.setFechaHora(LocalDateTime.parse(citaRq.getFechaHora()));
+        cita.setPaciente(paciente);
+        cita.setMedico(medico);
+        cita.setEstado("Programada");
         cita.setMotivo(citaRq.getMotivo());
-        cita.setFechaHora(citaRq.getFechaHora());
-        this.citaRepository.save(cita);
-        return "Se guardó la cita correctamente.";
+        return cita;
     }
 
-    /**
-     * Retorna una lista de citas ordenadas por fecha y hora en orden ascendente.
-     * Este método puede usarse para mostrar las citas más recientes primero.
-     *
-     * @return Lista de objetos {@link Cita} ordenados por fecha y hora.
-     */
-    @Override
-    public List<Cita> listarReciente() {
-        return this.citaRepository.findAllByOrderByFechaHoraAsc();
-    }
 }
