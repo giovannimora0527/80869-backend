@@ -8,7 +8,9 @@ import org.apache.coyote.BadRequestException;
 import java.util.List;
 
 public interface RecetaService {
-    List<Receta> obtenerTodasLasRecetas();
+    List<Receta> listarRecetas();
 
     RespuestaRs guardarReceta(RecetaRq recetaRq) throws BadRequestException;
+
+    RespuestaRs actualizarReceta(RecetaRq recetaRq) throws BadRequestException;
 }

@@ -28,21 +28,26 @@ public class MedicoApiController implements MedicoApi {
 
     @Override
     public ResponseEntity<List<Medico>>
-            listarMedicosPorEspecialidad(String codigoEspecializacion)
+    listarMedicosPorEspecialidad(String codigoEspecializacion)
             throws BadRequestException {
         return ResponseEntity.ok(this.medicoService
                 .listarMedicosPorEspecialidad(codigoEspecializacion));
     }
 
     @Override
-    public ResponseEntity<Medico> 
-        buscarPorDocumento(String documento) throws BadRequestException {
-       return ResponseEntity.ok(this.medicoService.buscarPorCC(documento));
+    public ResponseEntity<Medico>
+    buscarPorDocumento(String documento) throws BadRequestException {
+        return ResponseEntity.ok(this.medicoService.buscarPorCC(documento));
     }
 
     @Override
     public ResponseEntity<RespuestaRs> guardarMedico(MedicoRq medicoRq) throws BadRequestException {
         return ResponseEntity.ok(this.medicoService.guardarMedico(medicoRq));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarMedico(Long id, MedicoRq medicoRq) throws BadRequestException {
+        return ResponseEntity.ok(this.medicoService.actualizarMedico(id, medicoRq));
     }
 
 }

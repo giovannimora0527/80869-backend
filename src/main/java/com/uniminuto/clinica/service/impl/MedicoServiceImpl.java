@@ -34,49 +34,33 @@ public class MedicoServiceImpl implements MedicoService {
     @Override
     public List<Medico> listarMedicosPorEspecialidad(String codEspecialidad)
             throws BadRequestException {
-        // 1. Consulto si la especialidad existe por codigo
         Optional<Especializacion> optEspecializacion = this.especialidadRepository
                 .findByCodigoEspecializacion(codEspecialidad);
-        // SI no esta o no existe la especializacion Lanzo Error por codigo
-        // No existe
         if (!optEspecializacion.isPresent()) {
-           throw new BadRequestException("No existe el codigo de la especializacion");
+            throw new BadRequestException("No existe el codigo de la especializacion");
         }
-        
-        // Obtengo el objeto especializacion con el codigo ingresado
-        Especializacion esp = optEspecializacion.get();  
-        // Devuelvo la lista de resultados con la especializacion.
+
+        Especializacion esp = optEspecializacion.get();
         return this.medicoRepository.findByEspecializacion(esp);
     }
 
     @Override
     public Medico buscarPorCC(String documento) throws BadRequestException {
-        // Paso 1. Crear un metodo en el repo q busque un medico por cc CHECK
-        // Paso 2. Verificar que el medico existe por documento
-        // Paso 3. Sino esta arrojar error.
-        // Paso 4. Esta el medico ... devolverlo :)
-        
-        // PASO 2.
         Optional<Medico> optMedico = this.medicoRepository
                 .findByNumeroDocumento(documento);
-        // Paso 3. 
         if (!optMedico.isPresent()) {
             throw new BadRequestException("El medico no se encuentra.");
         }
-        
-        // Paso 4. Devolver el resultado
         return optMedico.get();
     }
 
     @Override
     public RespuestaRs guardarMedico(MedicoRq medicoRq) throws BadRequestException {
-        // Paso 1. Validar que no exista un medico con el mismo numero de documento
         Optional<Medico> optMedico = this.medicoRepository
                 .findByNumeroDocumento(medicoRq.getNumeroDocumento());
         if (optMedico.isPresent()) {
             throw new BadRequestException("Ya existe un medico con el mismo numero de documento");
         }
-        // Paso 2. Validar que no exista un medico con el mismo registro profesional
         optMedico = this.medicoRepository.findByRegistroProfesional(medicoRq.getRegistroProfesional());
         if (optMedico.isPresent()) {
             throw new BadRequestException("Ya existe un medico con el mismo numero de registro profesional");
@@ -95,6 +79,50 @@ public class MedicoServiceImpl implements MedicoService {
         return rta;
     }
 
+    @Override
+    public RespuestaRs actualizarMedico(Long id, MedicoRq medicoRq) throws BadRequestException {
+        Optional<Medico> optMedico = this.medicoRepository.findById(id);
+        if (optMedico.isEmpty()) {
+            throw new BadRequestException("No existe un médico con el ID indicado");
+        }
+
+        Medico medicoExistente = optMedico.get();
+
+        if (!medicoExistente.getNumeroDocumento().equals(medicoRq.getNumeroDocumento())) {
+            Optional<Medico> dupDoc = this.medicoRepository.findByNumeroDocumento(medicoRq.getNumeroDocumento());
+            if (dupDoc.isPresent()) {
+                throw new BadRequestException("Ya existe un médico con el mismo número de documento");
+            }
+        }
+
+        if (!medicoExistente.getRegistroProfesional().equals(medicoRq.getRegistroProfesional())) {
+            Optional<Medico> dupReg = this.medicoRepository.findByRegistroProfesional(medicoRq.getRegistroProfesional());
+            if (dupReg.isPresent()) {
+                throw new BadRequestException("Ya existe un médico con el mismo número de registro profesional");
+            }
+        }
+
+        Optional<Especializacion> optEspecializacion = this.especialidadRepository
+                .findById(medicoRq.getEspecializacion());
+        if (optEspecializacion.isEmpty()) {
+            throw new BadRequestException("No existe la especialización indicada");
+        }
+
+        medicoExistente.setTipoDocumento(medicoRq.getTipoDocumento());
+        medicoExistente.setNumeroDocumento(medicoRq.getNumeroDocumento());
+        medicoExistente.setNombres(medicoRq.getNombres());
+        medicoExistente.setApellidos(medicoRq.getApellidos());
+        medicoExistente.setTelefono(medicoRq.getTelefono());
+        medicoExistente.setRegistroProfesional(medicoRq.getRegistroProfesional());
+        medicoExistente.setEspecializacion(optEspecializacion.get());
+
+        this.medicoRepository.save(medicoExistente);
+
+        RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Médico actualizado correctamente");
+        return rta;
+    }
+
     private Medico convertir(MedicoRq medicoRq, Especializacion especializacion) {
         Medico medico = new Medico();
         medico.setNombres(medicoRq.getNombres());
@@ -106,6 +134,5 @@ public class MedicoServiceImpl implements MedicoService {
         medico.setTelefono(medicoRq.getTelefono());
         return medico;
     }
-
 
 }

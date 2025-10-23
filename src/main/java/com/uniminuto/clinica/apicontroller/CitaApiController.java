@@ -20,11 +20,16 @@ public class CitaApiController implements CitaApi {
 
     @Override
     public ResponseEntity<List<Cita>> listarCitas() {
-        return ResponseEntity.ok(this.citaService.obtenerTodasLasCitas());
+        return ResponseEntity.ok(this.citaService.listarCitas());
     }
 
     @Override
     public ResponseEntity<RespuestaRs> guardarCita(CitaRq citaRq) throws BadRequestException {
         return ResponseEntity.ok(this.citaService.guardarCita(citaRq));
+    }
+
+    @Override
+    public ResponseEntity<RespuestaRs> actualizarCita(CitaRq citaRq) throws BadRequestException {
+        return ResponseEntity.ok(this.citaService.actualizarCita(citaRq));
     }
 }

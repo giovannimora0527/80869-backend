@@ -1,9 +1,16 @@
 package com.uniminuto.clinica.service;
 
 import com.uniminuto.clinica.entity.Especializacion;
+import com.uniminuto.clinica.model.EspecializacionRq;
+import com.uniminuto.clinica.model.RespuestaRs;
+import org.apache.coyote.BadRequestException;
+
 import java.util.List;
 
 public interface EspecializacionService {
+    List<Especializacion> listarEspecializaciones();
 
-    List<Especializacion> listar();
+    RespuestaRs guardarEspecializacion(EspecializacionRq especializacionRq) throws BadRequestException;
+
+    RespuestaRs actualizarEspecializacion(EspecializacionRq especializacionRq) throws BadRequestException;
 }

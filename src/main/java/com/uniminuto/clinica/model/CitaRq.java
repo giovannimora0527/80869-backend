@@ -1,11 +1,14 @@
 package com.uniminuto.clinica.model;
 
 import lombok.Data;
-
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Data
 public class CitaRq {
+
+    private Integer id;
+
     @NotNull(message = "El campo medicoId es obligatorio")
     private Long medicoId;
 
@@ -13,7 +16,7 @@ public class CitaRq {
     private Long pacienteId;
 
     @NotNull(message = "El campo fechaHora es obligatorio")
-    private String fechaHora;
+    private LocalDateTime fechaHora;
 
     @NotNull(message = "El campo estado es obligatorio")
     private String estado;
