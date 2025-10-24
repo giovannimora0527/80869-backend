@@ -9,10 +9,10 @@ public class RecetaRq {
     private Long id;
 
     @NotNull(message = "El campo citaId es obligatorio")
-    private Integer citaId;
+    private Long citaId;
 
     @NotNull(message = "El campo medicamentoId es obligatorio")
-    private Integer medicamentoId;
+    private Long medicamentoId;
 
     @NotNull(message = "El campo dosis es obligatorio")
     private String dosis;

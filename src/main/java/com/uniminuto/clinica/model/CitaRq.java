@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class CitaRq {
 
-    private Integer id;
+    private Long id;
 
     @NotNull(message = "El campo medicoId es obligatorio")
     private Long medicoId;

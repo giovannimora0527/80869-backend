@@ -43,12 +43,13 @@ public class RecetaServiceImpl implements RecetaService {
             throw new BadRequestException("No existe la cita asociada");
         }
 
-        Optional<Medicamento> medicamentoOpt = medicamentoRepository.findById(recetaRq.getMedicamentoId());
+        Optional<Medicamento> medicamentoOpt = this.medicamentoRepository.findById(recetaRq.getMedicamentoId());
         if (!medicamentoOpt.isPresent()) {
             throw new BadRequestException("No existe el medicamento asociado");
         }
 
-        List<Receta> recetasExistentes = this.recetaRepository.findByCitaAndMedicamento(citaOpt.get(), medicamentoOpt.get());
+        List<Receta> recetasExistentes =
+                this.recetaRepository.findByCitaAndMedicamento(citaOpt.get(), medicamentoOpt.get());
         if (!recetasExistentes.isEmpty()) {
             throw new BadRequestException("Ya existe una receta para la cita y medicamento indicados");
         }
@@ -83,14 +84,16 @@ public class RecetaServiceImpl implements RecetaService {
             throw new BadRequestException("No existe la cita asociada");
         }
 
-        Optional<Medicamento> medicamentoOpt = medicamentoRepository.findById(recetaRq.getMedicamentoId());
+        Optional<Medicamento> medicamentoOpt = this.medicamentoRepository.findById(recetaRq.getMedicamentoId());
         if (!medicamentoOpt.isPresent()) {
             throw new BadRequestException("No existe el medicamento asociado");
         }
 
         // Evitar duplicados de receta con la misma cita y medicamento
-        List<Receta> recetasExistentes = this.recetaRepository.findByCitaAndMedicamento(citaOpt.get(), medicamentoOpt.get());
-        if (!recetasExistentes.isEmpty() && !recetasExistentes.get(0).getId().equals(recetaActual.getId())) {
+        List<Receta> recetasExistentes =
+                this.recetaRepository.findByCitaAndMedicamento(citaOpt.get(), medicamentoOpt.get());
+        if (!recetasExistentes.isEmpty()
+                && !recetasExistentes.get(0).getId().equals(recetaActual.getId())) {
             throw new BadRequestException("Ya existe una receta con la misma cita y medicamento");
         }
 

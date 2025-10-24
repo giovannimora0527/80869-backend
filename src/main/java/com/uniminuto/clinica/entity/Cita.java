@@ -18,7 +18,7 @@ public class Cita implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private Integer id;
+    private Long id;
 
     @NotNull(message = "El campo pacienteId es obligatorio")
     @ManyToOne
