@@ -15,20 +15,21 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class MedicoApiController implements MedicoApi {
-    
+
     @Autowired
     private MedicoService medicoService;
 
     @Override
     public ResponseEntity<List<Medico>> listarMedicos() {
-       return ResponseEntity.ok(medicoService.buscarMedicos());
+        return ResponseEntity.ok(this.medicoService.listarMedicos());
     }
 
     @Override
-    public ResponseEntity<List<Medico>> 
-        listarMedicosPorEspecialidad(String codigo)  throws BadRequestException {
+    public ResponseEntity<List<Medico>>
+            listarMedicosporEspecialidad(String codigo)
+            throws BadRequestException {
         return ResponseEntity.ok(this.medicoService
-                .buscarMedicosPorEspecializacion(codigo));
+                .buscarPorEspecialidad(codigo));
     }
-    
+
 }

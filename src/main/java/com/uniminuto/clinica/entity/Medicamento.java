@@ -1,52 +1,50 @@
 package com.uniminuto.clinica.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import lombok.Data;
+import java.util.List;
 
-/**
- * Entidad que representa un medicamento en el inventario de la clínica.
- */
 @Data
 @Entity
 @Table(name = "medicamento")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Medicamento implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 100, nullable = false, unique = true)
     private String nombre;
 
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", columnDefinition = "text")
     private String descripcion;
 
-    @Column(name = "presentacion")
+    @Column(name = "presentacion", length = 100)
     private String presentacion;
 
-    /** Fecha de compra del medicamento. */
-    @Column(name = "fecha_compra")
+    @Column(name = "fecha_compra", nullable = false)
     private LocalDate fechaCompra;
 
-    /** Fecha de vencimiento del medicamento. */
-    @Column(name = "fecha_vence")
+    @Column(name = "fecha_vence", nullable = false)
     private LocalDate fechaVence;
 
-    /** Fecha de creación del registro. */
-    @Column(name = "fecha_creacion_registro")
+    @Column(name = "fecha_creacion_registro", nullable = false)
     private LocalDateTime fechaCreacionRegistro;
 
-    /** Fecha de modificación del registro. */
     @Column(name = "fecha_modificacion_registro")
     private LocalDateTime fechaModificacionRegistro;
+
+    @OneToMany(mappedBy = "medicamento", fetch = FetchType.LAZY)
+    @JsonIgnore // Ignora las recetas en la respuesta JSON
+    private List<Receta> recetas;
 }

@@ -1,23 +1,27 @@
 package com.uniminuto.clinica.service;
 
 import com.uniminuto.clinica.entity.Paciente;
+import com.uniminuto.clinica.model.PacienteRq;
+import com.uniminuto.clinica.model.PacienteRs; 
 import java.util.List;
+import java.util.Optional;
+import org.apache.coyote.BadRequestException;
 
-/**
- *
- * @author Miguel
- */
 public interface PacienteService {
-    List<Paciente> listarPacientes();
-    Paciente buscarPorNumeroDocumento(String numeroDocumento);
     
-    /**
-     * Lista los pacientes del mayor al menor por fecha de nacimiento.
-     * Se asume que el formato de {@code fechaNacimiento} permite el orden cronológico
-     * lexicográfico (por ejemplo, yyyy-MM-dd).
-     *
-     * @return lista de pacientes ordenada por fecha de nacimiento ascendente
-     */
-    List<Paciente> listarPacientesMayorAMenorPorFechaNacimiento();
+   
+    List<PacienteRs> obtenerTodos();
     
+   
+    Optional<PacienteRs> buscarPorDocumento(String documento);
+    
+  
+    PacienteRs guardar(PacienteRq paciente) throws BadRequestException;
+    
+    void eliminar(Long id);
+
+    PacienteRs actualizar(Long id, PacienteRq paciente) throws BadRequestException;
+    List<PacienteRs> obtenerPacientesOrdenadosPorFechaNacimiento();
+
+
 }

@@ -41,7 +41,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     /**
      * Configuracion del cors.
      *

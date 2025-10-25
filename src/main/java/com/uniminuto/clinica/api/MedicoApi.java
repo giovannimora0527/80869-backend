@@ -16,11 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @CrossOrigin(origins = "*")
 @RequestMapping("/medico")
 public interface MedicoApi {
-    /**
-     * Lista los usuarios de la bd.
-     *
-     * @return
-     */
+    
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
             consumes = {"application/json"},
@@ -28,16 +24,11 @@ public interface MedicoApi {
     ResponseEntity<List<Medico>> listarMedicos();
     
     
-    /**
-     * Lista los medicos por especializacion de la bd.
-     *
-     * @return
-     */
-    @RequestMapping(value = "/listar-por-especializacion",
+    @RequestMapping(value = "/listar-x-cod-esp",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Medico>> listarMedicosPorEspecialidad(
-       @RequestParam String codigo
-    )  throws BadRequestException;
+    ResponseEntity<List<Medico>> listarMedicosporEspecialidad(
+      @RequestParam String codigo
+    ) throws BadRequestException;
 }

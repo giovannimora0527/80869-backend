@@ -1,45 +1,48 @@
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.PacienteApi;
-import com.uniminuto.clinica.entity.Paciente;
+import com.uniminuto.clinica.model.PacienteRq;
+import com.uniminuto.clinica.model.PacienteRs;
 import com.uniminuto.clinica.service.PacienteService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
+import java.util.Optional;
 import org.apache.coyote.BadRequestException;
-
-
-/**
- *
- * @author Miguel
- */
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PacienteApiController implements PacienteApi {
 
     @Autowired
-    private PacienteService pacienteService;
+    private PacienteService servicio;
 
     @Override
-    public ResponseEntity<List<Paciente>> listarPacientes() {
-        return ResponseEntity.ok(pacienteService.listarPacientes());
-    }
-    
-    //** sedundo api buscar por documento**//
-    @Override
-    public ResponseEntity<Paciente> buscarPorDocumento(String numeroDocumento) 
-        throws BadRequestException {
-        return ResponseEntity.ok(pacienteService.buscarPorNumeroDocumento(numeroDocumento));
+    public List<PacienteRs> obtenerTodos() {
+        return this.servicio.obtenerTodos();
     }
 
-    /**
-     * Lista pacientes del mayor al menor segun fecha de nacimiento.
-     *
-     * @return lista ordenada
-     */
     @Override
-    public ResponseEntity<List<Paciente>> listarPacientesPorFechaNacimientoDesc() {
-        return ResponseEntity.ok(pacienteService.listarPacientesMayorAMenorPorFechaNacimiento());
+    public Optional<PacienteRs> buscarPorDocumento(String documento) {
+        return this.servicio.buscarPorDocumento(documento);
+    }
+
+    @Override
+    public PacienteRs guardar(PacienteRq paciente) throws BadRequestException {
+        return this.servicio.guardar(paciente);
+    }
+
+    @Override
+    public PacienteRs actualizar(Long id, PacienteRq paciente) throws BadRequestException {
+        return this.servicio.actualizar(id, paciente);
+    }
+
+    @Override
+    public void eliminar(Long id) {
+        this.servicio.eliminar(id);
+    }
+
+    @Override
+    public List<PacienteRs> obtenerPacientesOrdenadosPorFechaNacimiento() {
+        return this.servicio.obtenerPacientesOrdenadosPorFechaNacimiento();
     }
 }

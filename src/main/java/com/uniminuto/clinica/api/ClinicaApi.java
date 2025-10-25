@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  *
  * @author lmora
- */ 
+ */
 @CrossOrigin(origins = "*")
 @RequestMapping("/clinica")
 public interface ClinicaApi {
 
     @RequestMapping(value = "/test",
             produces = {"application/json"},
+            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<RespuestaRs> testService();
 
