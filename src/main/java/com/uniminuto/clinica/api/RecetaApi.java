@@ -33,4 +33,12 @@ public interface RecetaApi {
     ResponseEntity<RespuestaRs> guardarReceta(
             @RequestBody @Valid RecetaRq recetaRq
     ) throws BadRequestException;
+
+    @RequestMapping(value = "/actualizar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<RespuestaRs> actualizarReceta(
+            @RequestBody @Valid RecetaRq recetaRq
+    ) throws BadRequestException;
 }

@@ -19,12 +19,12 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*")
 @RequestMapping("/medico")
 public interface MedicoApi {
-    
-//    @RequestMapping(value = "/listar",
-//            produces = {"application/json"},
-//            consumes = {"application/json"},
-//            method = RequestMethod.GET)
-//    ResponseEntity<List<Medico>> listarMedicos();
+
+    @RequestMapping(value = "/listar",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Medico>> listarMedicos();
     
     
     @RequestMapping(value = "/listar-x-especialidad",
