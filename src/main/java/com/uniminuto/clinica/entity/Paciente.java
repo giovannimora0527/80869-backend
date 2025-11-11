@@ -1,28 +1,31 @@
 package com.uniminuto.clinica.entity;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 import lombok.Data;
 
-/**
- *
- * @author lmora
- */
+@Data
 @Entity
 @Table(name = "paciente")
-@Data
 public class Paciente implements Serializable {
 
+    /**
+     * Id serializable.
+     */
+    private static final long serialVersionUID = 1L;
+    /**
+     * Id.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
 
     @Column(name = "usuario_id")
     private Integer usuarioId;
@@ -40,7 +43,7 @@ public class Paciente implements Serializable {
     private String apellidos;
 
     @Column(name = "fecha_nacimiento")
-    private LocalDate fechaNacimiento;
+    private String fechaNacimiento;
 
     @Column(name = "genero")
     private String genero;
@@ -50,5 +53,4 @@ public class Paciente implements Serializable {
 
     @Column(name = "direccion")
     private String direccion;
-
 }

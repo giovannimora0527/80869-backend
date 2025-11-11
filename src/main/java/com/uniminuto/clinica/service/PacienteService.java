@@ -9,10 +9,20 @@ import org.apache.coyote.BadRequestException;
  * @author lmora
  */
 public interface PacienteService {
-    
-    List<Paciente> listarPacientes();
-    
-    Paciente buscarPorDocumento (String documento) throws BadRequestException;
+    /**
+     * Lista todos los pacientes de la bd.
+     * @return Lista de pacientes.
+     */
+    List<Paciente> encontrarTodosLosPacientes();
 
-    List<Paciente> listarPacientesOrdenadoPorFechaNacimiento();
+    /**
+     * Busca un paciente dado un documento de identidad.
+     * @param documento documento a buscar.
+     * @return Paciente encontrado.
+     * @throws BadRequestException excepcion.
+     */
+    Paciente buscarPacientePorDocumento(String documento) throws BadRequestException;
+
+
+    List<Paciente> listarOrdenadoPorFechaNacimiento(boolean ascendente);
 }

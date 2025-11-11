@@ -1,8 +1,6 @@
 package com.uniminuto.clinica.api;
 
-import com.uniminuto.clinica.entity.Cita;
 import com.uniminuto.clinica.entity.Receta;
-import com.uniminuto.clinica.model.CitaRq;
 import com.uniminuto.clinica.model.RecetaRq;
 import com.uniminuto.clinica.model.RespuestaRs;
 import org.apache.coyote.BadRequestException;
@@ -19,6 +17,10 @@ import java.util.List;
 @RequestMapping("/receta")
 public interface RecetaApi {
 
+    /**
+     * Api para listar todas las recetas del sistema.
+     * @return listado de recetas.
+     */
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
             consumes = {"application/json"},
@@ -26,18 +28,26 @@ public interface RecetaApi {
     ResponseEntity<List<Receta>> listarRecetas();
 
 
+    /**
+     * Api para guardar una receta en el sistema.
+     * @return respuesta del servicio.
+     */
     @RequestMapping(value = "/guardar",
             produces = {"application/json"},
             consumes = {"application/json"},
-            method = RequestMethod.GET)
+            method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> guardarReceta(
-            @RequestBody @Valid RecetaRq recetaRq
+           @RequestBody @Valid RecetaRq recetaRq
     ) throws BadRequestException;
 
+    /**
+     * Api para acualizar una receta en el sistema.
+     * @return respuesta del servicio.
+     */
     @RequestMapping(value = "/actualizar",
             produces = {"application/json"},
             consumes = {"application/json"},
-            method = RequestMethod.GET)
+            method = RequestMethod.POST)
     ResponseEntity<RespuestaRs> actualizarReceta(
             @RequestBody @Valid RecetaRq recetaRq
     ) throws BadRequestException;

@@ -4,11 +4,14 @@ import com.uniminuto.clinica.entity.Especializacion;
 import com.uniminuto.clinica.entity.Medico;
 import com.uniminuto.clinica.model.MedicoRq;
 import com.uniminuto.clinica.model.RespuestaRs;
-import com.uniminuto.clinica.repository.EspecialidadRepository;
+import com.uniminuto.clinica.repository.EspecializacionRepository;
 import com.uniminuto.clinica.repository.MedicoRepository;
+import com.uniminuto.clinica.service.EspecializacionService;
 import com.uniminuto.clinica.service.MedicoService;
+
 import java.util.List;
 import java.util.Optional;
+
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +27,11 @@ public class MedicoServiceImpl implements MedicoService {
     private MedicoRepository medicoRepository;
 
     @Autowired
-    private EspecialidadRepository especialidadRepository;
+    private EspecializacionService especializacionService;
+
+
+    @Autowired
+    private EspecializacionRepository especializacionRepository;
 
     @Override
     public List<Medico> listarMedicos() {
@@ -32,80 +39,56 @@ public class MedicoServiceImpl implements MedicoService {
     }
 
     @Override
-    public List<Medico> listarMedicosPorEspecialidad(String codEspecialidad)
+    public List<Medico> buscarPorEspecialidad(String codigo)
             throws BadRequestException {
-        // 1. Consulto si la especialidad existe por codigo
-        Optional<Especializacion> optEspecializacion = this.especialidadRepository
-                .findByCodigoEspecializacion(codEspecialidad);
-        // SI no esta o no existe la especializacion Lanzo Error por codigo
-        // No existe
-        if (!optEspecializacion.isPresent()) {
-           throw new BadRequestException("No existe el codigo de la especializacion");
-        }
-        
-        // Obtengo el objeto especializacion con el codigo ingresado
-        Especializacion esp = optEspecializacion.get();  
-        // Devuelvo la lista de resultados con la especializacion.
-        return this.medicoRepository.findByEspecializacion(esp);
-    }
-
-    @Override
-    public Medico buscarPorCC(String documento) throws BadRequestException {
-        // Paso 1. Crear un metodo en el repo q busque un medico por cc CHECK
-        // Paso 2. Verificar que el medico existe por documento
-        // Paso 3. Sino esta arrojar error.
-        // Paso 4. Esta el medico ... devolverlo :)
-        
-        // PASO 2.
-        Optional<Medico> optMedico = this.medicoRepository
-                .findByNumeroDocumento(documento);
-        // Paso 3. 
-        if (!optMedico.isPresent()) {
-            throw new BadRequestException("El medico no se encuentra.");
-        }
-        
-        // Paso 4. Devolver el resultado
-        return optMedico.get();
+        Especializacion e = this.especializacionService
+                .buscarEspecializacionPorCod(codigo);
+        return this.medicoRepository.findByEspecializacion(e);
     }
 
     @Override
     public RespuestaRs guardarMedico(MedicoRq medicoRq) throws BadRequestException {
-        // Paso 1. Validar que no exista un medico con el mismo numero de documento
-        Optional<Medico> optMedico = this.medicoRepository
-                .findByNumeroDocumento(medicoRq.getNumeroDocumento());
-        if (optMedico.isPresent()) {
-            throw new BadRequestException("Ya existe un medico con el mismo numero de documento");
-        }
-        // Paso 2. Validar que no exista un medico con el mismo registro profesional
-        optMedico = this.medicoRepository.findByRegistroProfesional(medicoRq.getRegistroProfesional());
-        if (optMedico.isPresent()) {
-            throw new BadRequestException("Ya existe un medico con el mismo numero de registro profesional");
+        Optional<Medico> optmedico = this.medicoRepository.findByDocumento(
+                medicoRq.getDocumento()
+        );
+        if (optmedico.isPresent()) {
+            throw new BadRequestException("El número de documento ya está registrado");
         }
 
-        Optional<Especializacion> optEspecializacion = this.especialidadRepository
+        optmedico = this.medicoRepository.findByRegistroProfesional(medicoRq.getRegistroProfesional());
+        if (optmedico.isPresent()) {
+            throw new BadRequestException("Existe otro medico con el registro profesional ingresado");
+        }
+
+        Optional<Especializacion> optEsp = this.especializacionRepository
                 .findById(medicoRq.getEspecializacion());
-        if (optEspecializacion.isEmpty()) {
-            throw new BadRequestException("No existe la especializacion indicada");
+        if (optEsp.isEmpty()) {
+            throw new BadRequestException("La especialización no existe");
         }
 
-        Medico medicoGuardar = this.convertir(medicoRq, optEspecializacion.get());
+        Medico medicoGuardar = this.convertToRqToEntidad(medicoRq, optEsp.get());
         this.medicoRepository.save(medicoGuardar);
         RespuestaRs rta = new RespuestaRs();
-        rta.setMensaje("Se ha guardado el medico correctamente");
+        rta.setMensaje("Médico guardado exitosamente");
+        rta.setStatus(200);
         return rta;
     }
 
-    private Medico convertir(MedicoRq medicoRq, Especializacion especializacion) {
+    private Medico convertToRqToEntidad(MedicoRq medicoRq, Especializacion especialidad) {
         Medico medico = new Medico();
         medico.setNombres(medicoRq.getNombres());
         medico.setApellidos(medicoRq.getApellidos());
+        medico.setDocumento(medicoRq.getDocumento());
         medico.setTipoDocumento(medicoRq.getTipoDocumento());
-        medico.setNumeroDocumento(medicoRq.getNumeroDocumento());
         medico.setRegistroProfesional(medicoRq.getRegistroProfesional());
-        medico.setEspecializacion(especializacion);
+        medico.setEspecializacion(especialidad);
         medico.setTelefono(medicoRq.getTelefono());
         return medico;
     }
 
+    @Override
+    public RespuestaRs actualizarsMedico(MedicoRq medicoRq) throws BadRequestException {
+        return null;
+    }
 
 }

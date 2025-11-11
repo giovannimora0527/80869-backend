@@ -20,23 +20,26 @@ public class PacienteServiceImpl implements PacienteService {
     private PacienteRepository pacienteRepository;
 
     @Override
-    public List<Paciente> listarPacientes() {
+    public List<Paciente> encontrarTodosLosPacientes() {
         return this.pacienteRepository.findAll();
     }
 
     @Override
-    public Paciente buscarPorDocumento(String documento) throws BadRequestException {
-        Optional<Paciente> optPaciente = this.pacienteRepository
-                .findByNumeroDocumento(documento);
+    public Paciente buscarPacientePorDocumento(String documento) throws BadRequestException {
+        Optional<Paciente> optPaciente = this.pacienteRepository.findByNumeroDocumento(documento);
         if (!optPaciente.isPresent()) {
-            throw new BadRequestException("No se encontro el documento del paciente");
+            throw new BadRequestException("No se encuentra el paciente");
         }
         return optPaciente.get();
     }
 
     @Override
-    public List<Paciente> listarPacientesOrdenadoPorFechaNacimiento() {
-        return this.pacienteRepository.findAllByOrderByFechaNacimientoAsc();
+    public List<Paciente> listarOrdenadoPorFechaNacimiento(boolean ascendente) {
+        if (ascendente) {
+            return this.pacienteRepository.findAllByOrderByFechaNacimientoAsc();
+        } else {
+            return this.pacienteRepository.findAllByOrderByFechaNacimientoDesc();
+        }
     }
 
 }

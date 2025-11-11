@@ -14,10 +14,15 @@ import lombok.Data;
  *
  * @author lmora
  */
+@Data
 @Entity
 @Table(name="usuario")
-@Data
 public class Usuario implements Serializable {
+    
+    /**
+     * Id serializable.
+     */
+    private static final long serialVersionUID = 1L;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,5 +43,8 @@ public class Usuario implements Serializable {
     
     @Column(name = "activo")
     private boolean activo;
+
+    @Column(name = "email")
+    private String email;
     
 }
