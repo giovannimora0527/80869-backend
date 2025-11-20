@@ -7,11 +7,17 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Clase Entidad Medicamento.
+ */
 @Data
 @Entity
 @Table(name = "medicamento")
 public class Medicamento implements Serializable {
 
+    /**
+     * Id serializable.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -46,8 +52,7 @@ public class Medicamento implements Serializable {
     @Column(name = "fecha_compra", nullable = false)
     private LocalDate fechaCompra;
 
-    /**
-     * Fecha de vencimiento del medicamento.
+    /*** Fecha de vencimiento del medicamento.
      */
     @Column(name = "fecha_vence", nullable = false)
     private LocalDate fechaVence;
@@ -55,12 +60,12 @@ public class Medicamento implements Serializable {
     /**
      * Fecha de creación del registro.
      */
-    @Column(name = "fecha_creacion_registro", nullable = false)
+    @javax.persistence.Column(name = "fecha_creacion_registro", nullable = false)
     private LocalDateTime fechaCreacionRegistro;
 
     /**
      * Fecha de modificación del registro.
      */
-    @Column(name = "fecha_modificacion_registro")
+    @javax.persistence.Column(name = "fecha_modificacion_registro")
     private LocalDateTime fechaModificacionRegistro;
 }

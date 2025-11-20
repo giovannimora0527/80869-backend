@@ -12,11 +12,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    
     List<Usuario> findByRol(String rol);
     
-    Optional<Usuario> findByUsername(String username);
-    
-    List<Usuario> findByActivo(boolean activo);
-    
+    Optional<Usuario> findByUsername(String nombreUsuario);
+        
+    List<Usuario> findByActivo(boolean estado);
 }

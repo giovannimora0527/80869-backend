@@ -24,13 +24,12 @@ public class MedicamentoApiController implements MedicamentoApi {
     }
 
     @Override
-    public ResponseEntity<RespuestaRs> guardarMedicamento(MedicamentoRq medicamentoRq)
-            throws BadRequestException {
-        return ResponseEntity.ok(this.medicamentoService.guardarMedicamento(medicamentoRq));
+    public ResponseEntity<RespuestaRs> guardarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
+        return ResponseEntity.ok(medicamentoService.guardarMedicamento(medicamentoRq));
     }
 
     @Override
     public ResponseEntity<RespuestaRs> actualizarMedicamento(MedicamentoRq medicamentoRq) throws BadRequestException {
-        return ResponseEntity.ok(this.medicamentoService.actualizarMedicamento(medicamentoRq));
+        return ResponseEntity.ok(medicamentoService.actualizarMedicamento(medicamentoRq));
     }
 }

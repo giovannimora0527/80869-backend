@@ -6,45 +6,41 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- *
- * @author lmora
- */
 @CrossOrigin(origins = "*")
 @RequestMapping("/paciente")
 public interface PacienteApi {
 
     /**
-     * Lista todos los pacientes registrados en el sistema.
+     * Lista los usuarios de la bd.
      *
-     * @return {@link ResponseEntity} que contiene una lista de objetos {@link Paciente}.
-     * @throws BadRequestException si ocurre un error al procesar la solicitud.
-     *
+     * @return
      */
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Paciente>> listarPacientes() throws BadRequestException;
+    ResponseEntity<List<Paciente>> listarPacientes();
+
+
+    @RequestMapping(value = "/buscar-paciente-documento",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Paciente> buscarPacienteXIdentificacion(
+            @RequestParam String numeroDocumento)
+            throws BadRequestException;
+
 
     /**
-     * Busca un paciente por su número de documento.
+     * Lista los usuarios de la bd.
      *
-     * @param numeroDocumento Número de documento del paciente a buscar.
-     * @return {@link ResponseEntity} que contiene el objeto {@link Paciente} encontrado.
-     * @throws BadRequestException si el número de documento es inválido
-     *                             o si no se encuentra el paciente.
+     * @return
      */
-    @RequestMapping(value = "/buscar-x-documento",
+    @RequestMapping(value = "/listar-orden-fecha-nacimiento",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<Paciente> buscarPacientePorDoc(
-            @RequestParam String numeroDocumento) throws BadRequestException;
-
-    @RequestMapping(value = "/listar-ordenado-nacimiento",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<List<Paciente>> listarPacientesOrdenado() throws BadRequestException;
+    ResponseEntity<List<Paciente>> listarPacientesXOrden(
+            @RequestParam String orden
+    );
 }

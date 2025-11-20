@@ -15,26 +15,23 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class PacienteApiController implements PacienteApi {
-    
+
     @Autowired
     private PacienteService pacienteService;
 
     @Override
     public ResponseEntity<List<Paciente>> listarPacientes() {
-       return ResponseEntity.ok(this.pacienteService.listarPacientes());
-    }
-    
-    @Override
-    public ResponseEntity<Paciente> 
-        buscarPacientePorDoc(String numeroDocumento) throws BadRequestException {
-       return ResponseEntity.ok(this.pacienteService
-               .buscarPorDocumento(numeroDocumento));
+        return ResponseEntity.ok(pacienteService.encontrarTodosLosPacientes());
     }
 
     @Override
-    public ResponseEntity<List<Paciente>> listarPacientesOrdenado() throws BadRequestException {
-        return ResponseEntity.ok(this.pacienteService
-                .listarPacientesOrdenadoPorFechaNacimiento());
+    public ResponseEntity<Paciente> buscarPacienteXIdentificacion(String numeroDocumento)
+            throws BadRequestException {
+        return ResponseEntity.ok(pacienteService.buscarPacientePorDocumento(numeroDocumento));
     }
 
+    @Override
+    public ResponseEntity<List<Paciente>> listarPacientesXOrden(String orden) {
+        return ResponseEntity.ok(pacienteService.listarOrdenadoPorFechaNacimiento(orden.equals("asc")));
+    }
 }
