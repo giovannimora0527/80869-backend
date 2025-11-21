@@ -1,0 +1,229 @@
+@startuml Diagrama de Arquitectura General - Sistema de Gestión Clínica
+
+' Configuración de estilo
+skinparam packageStyle rectangle
+skinparam component {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+}
+
+title Arquitectura General del Sistema - Patrón en Capas
+
+' ===== CAPA 1: PRESENTACIÓN =====
+package "CAPA DE PRESENTACIÓN" as CapaPresentacion #LightCyan {
+    
+    component "Angular 19 SPA" as AngularApp
+    component "Login Module" as LoginMod
+    component "Auditoría Module" as AuditoriaMod
+    component "Dashboard Module" as DashboardMod
+    component "Gestión Clínica" as GestionMod
+    component "Guards" as Guards
+    component "Interceptors" as Interceptors
+    component "HTTP Services" as HttpServices
+    
+    AngularApp --> LoginMod
+    AngularApp --> AuditoriaMod
+    AngularApp --> DashboardMod
+    AngularApp --> GestionMod
+    AngularApp --> Guards
+    AngularApp --> Interceptors
+    AngularApp --> HttpServices
+    
+    note right of AngularApp
+        **Tecnologías:**
+        - Angular 19 (Standalone Components)
+        - TypeScript
+        - RxJS (Observables)
+        - Bootstrap + Angular Material
+        - NgxSpinner, SweetAlert2
+        
+        **Características:**
+        - Lazy Loading
+        - Formularios Reactivos
+        - Mensajería de usuario
+        - Feedback visual (spinner)
+    end note
+}
+
+' ===== CAPA 2: API REST =====
+package "CAPA DE API REST" as CapaAPI #LightYellow {
+    
+    component "AutenticarApiController" as AuthController
+    component "AuditoriaApiController" as AuditoriaController
+    component "PacienteApiController" as PacienteController
+    component "MedicoApiController" as MedicoController
+    component "CitaApiController" as CitaController
+    
+    component "JwtTokenFilter" as JwtFilter
+    component "SecurityConfig" as SecurityConf
+    component "CORS Configuration" as CORSConf
+    
+    JwtFilter -[hidden]-> SecurityConf
+    SecurityConf -[hidden]-> CORSConf
+    
+    note right of AuthController
+        **Responsabilidades:**
+        - Exponer endpoints REST
+        - Validación de entrada
+        - Manejo de errores HTTP
+        - Documentación OpenAPI
+        - Retornar DTOs/Responses
+    end note
+}
+
+' ===== CAPA 3: LÓGICA DE NEGOCIO =====
+package "CAPA DE LÓGICA DE NEGOCIO" as CapaNegocio #LightGreen {
+    
+    component "AutenticarServiceImpl" as AuthService
+    component "AuditoriaServiceImpl" as AuditoriaService
+    component "EmailService" as EmailService
+    component "PasswordRecoveryService" as PassRecoveryService
+    
+    component "JwtUtil" as JwtUtil
+    component "BCryptPasswordEncoder" as BCrypt
+    component "Control de Intentos" as ControlIntentos
+    component "Bloqueo Temporal" as BloqueoTemporal
+    
+    AuthService --> JwtUtil
+    AuthService --> BCrypt
+    AuthService --> ControlIntentos
+    AuthService --> BloqueoTemporal
+    
+    note right of AuthService
+        **Responsabilidades:**
+        - Lógica de negocio compleja
+        - Validaciones de negocio
+        - Orquestación de operaciones
+        - Manejo de transacciones
+        - Auditoría y logging
+        
+        **Reglas implementadas:**
+        - Máximo 3 intentos fallidos
+        - Bloqueo de 5 minutos
+        - Validación BCrypt
+        - Generación JWT
+    end note
+}
+
+' ===== CAPA 4: PERSISTENCIA =====
+package "CAPA DE PERSISTENCIA" as CapaPersistencia #LightPink {
+    
+    component "UsuarioRepository" as UsuarioRepo
+    component "AuditoriaLogRepository" as AuditoriaRepo
+    component "SessionRepository" as SessionRepo
+    component "PacienteRepository" as PacienteRepo
+    component "MedicoRepository" as MedicoRepo
+    component "CitaRepository" as CitaRepo
+    
+    component "Usuario Entity" as UsuarioEntity
+    component "AuditoriaLog Entity" as AuditoriaEntity
+    component "Session Entity" as SessionEntity
+    component "Paciente Entity" as PacienteEntity
+    
+    UsuarioRepo --> UsuarioEntity
+    AuditoriaRepo --> AuditoriaEntity
+    SessionRepo --> SessionEntity
+    PacienteRepo --> PacienteEntity
+    
+    note right of UsuarioRepo
+        **Tecnologías:**
+        - Spring Data JPA
+        - Hibernate 5.6.15
+        - HikariCP (pool conexiones)
+        
+        **Características:**
+        - Consultas personalizadas
+        - Métodos de búsqueda
+        - Transacciones automáticas
+    end note
+}
+
+' ===== CAPA 5: DATOS =====
+package "CAPA DE DATOS" as CapaDatos #LightGray {
+    database "MySQL 8.0.43" as MySQL
+    
+    note right of MySQL
+        **Configuración:**
+        - Schema: clinica
+        - Charset: utf8mb4
+        - Puerto: 3306
+        
+        **Tablas principales:**
+        - usuario (con campos de bloqueo)
+        - auditoria_log (eventos completos)
+        - session (tokens JWT)
+        - medico, paciente, cita
+        - medicamento, receta
+        - especializacion
+    end note
+}
+
+' ===== SERVICIOS EXTERNOS =====
+cloud "Servicios Externos" as ServiciosExternos {
+    component "Gmail SMTP\nsmtp.gmail.com:587" as Gmail
+    component "Swagger UI\n/swagger-ui.html" as SwaggerUI
+}
+
+' ===== RELACIONES ENTRE CAPAS =====
+
+AngularApp -down-> AuthController : HTTP/REST\nJSON\nJWT Token
+AuthController -down-> AuthService : Llamadas de métodos\nDTOs
+AuthService -down-> UsuarioRepo : Operaciones CRUD\nJPQL Queries
+UsuarioRepo -down-> UsuarioEntity : Mapeo ORM
+UsuarioEntity -down-> MySQL : JDBC\nSQL
+
+JwtFilter ..> AuthController : Protege
+AuthService -right-> Gmail : SMTP\nEmails
+AuthController ..> SwaggerUI : Documenta
+
+AuditoriaController --> AuditoriaService
+AuditoriaService --> AuditoriaRepo
+AuditoriaRepo --> MySQL
+
+' ===== FLUJOS PRINCIPALES =====
+
+note as N1
+    **FLUJO DE AUTENTICACIÓN:**
+    1. Usuario ingresa credenciales (Angular)
+    2. POST /auth/login (Controller)
+    3. AutenticarService valida con BCrypt
+    4. Consulta UsuarioRepository
+    5. Registra en AuditoriaLog
+    6. Genera JWT con JwtUtil
+    7. Guarda Session en BD
+    8. Retorna token al frontend
+end note
+
+note as N2
+    **FLUJO DE AUDITORÍA:**
+    1. Frontend solicita logs (Angular)
+    2. GET /auditoria?filtros (Controller)
+    3. AuditoriaService consulta Repository
+    4. Aplica filtros dinámicos (JPQL)
+    5. Retorna lista paginada
+    6. Frontend muestra en tabla
+    7. Opción de exportar CSV
+end note
+
+note as N3
+    **PATRÓN ARQUITECTÓNICO:**
+    
+    **Tipo:** Monolítico en Capas
+    
+    **Ventajas:**
+    - Simplicidad de desarrollo
+    - Fácil debugging
+    - Transacciones ACID
+    - Bajo overhead
+    
+    **Justificación:**
+    - Aplicación de tamaño medio
+    - Equipo pequeño
+    - No requiere escalado independiente
+    - Bajo acoplamiento entre módulos
+end note
+
+N1 -[hidden]right- N2
+N2 -[hidden]right- N3
+
+@enduml

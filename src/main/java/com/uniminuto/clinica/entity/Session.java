@@ -19,11 +19,11 @@ public class Session implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "session_id")
-    private Integer sessionId;
+    private Long sessionId;
 
     /** Identificador del usuario asociado a la sesión */
     @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    private Long userId;
 
     /** Token JWT de la sesión */
     @Column(name = "token", nullable = false, length = 500)

@@ -1,0 +1,260 @@
+@startuml Diagrama de Clases - Sistema de Gestión Clínica
+
+' Configuración de estilo
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+}
+
+' ===== ENTIDADES PRINCIPALES =====
+
+class Usuario {
+    - id: Long
+    - username: String
+    - password_hash: String
+    - email: String
+    - rol: String
+    - activo: Boolean
+    - fecha_creacion: LocalDateTime
+    --
+    ' Campos de seguridad
+    - intentos_fallidos: Integer
+    - ultimo_intento: LocalDateTime
+    - bloqueado_hasta: LocalDateTime
+    - ip_ultima_conexion: String
+    - ultimo_acceso: LocalDateTime
+    - password_reset_token: String
+    - token_expiracion: LocalDateTime
+    --
+    + estaBloqueado(): Boolean
+    + resetearIntentos(): void
+    + incrementarIntentos(): void
+}
+
+class Especializacion {
+    - id: Long
+    - nombre: String
+    - descripcion: String
+    - activo: Boolean
+    --
+    + getId(): Long
+    + getNombre(): String
+}
+
+class Medico {
+    - id: Long
+    - nombre: String
+    - apellido: String
+    - numero_licencia: String
+    - telefono: String
+    - email: String
+    - activo: Boolean
+    --
+    + especialidad: Especializacion
+    --
+    + getNombreCompleto(): String
+}
+
+class Paciente {
+    - id: Long
+    - nombre: String
+    - apellido: String
+    - documento: String
+    - fecha_nacimiento: LocalDate
+    - telefono: String
+    - email: String
+    - direccion: String
+    - activo: Boolean
+    --
+    + getEdad(): Integer
+    + getNombreCompleto(): String
+}
+
+class Cita {
+    - id: Long
+    - fecha_hora: LocalDateTime
+    - motivo: String
+    - estado: String
+    - observaciones: String
+    --
+    + paciente: Paciente
+    + medico: Medico
+    --
+    + isPendiente(): Boolean
+    + isCompletada(): Boolean
+    + cancelar(): void
+}
+
+class Medicamento {
+    - id: Long
+    - nombre: String
+    - descripcion: String
+    - concentracion: String
+    - presentacion: String
+    - laboratorio: String
+    - activo: Boolean
+    --
+    + getId(): Long
+    + getNombre(): String
+}
+
+class Receta {
+    - id: Long
+    - fecha_emision: LocalDateTime
+    - diagnostico: String
+    - indicaciones: String
+    --
+    + cita: Cita
+    + medicamentos: List<Medicamento>
+    --
+    + agregarMedicamento(): void
+    + getDetalles(): String
+}
+
+' ===== SEGURIDAD Y AUDITORÍA =====
+
+class Session {
+    - session_id: Long
+    - user_id: Long
+    - token: String
+    - fecha_ini_sesion: LocalDateTime
+    - fecha_expiracion: LocalDateTime
+    --
+    + isValida(): Boolean
+    + isExpirada(): Boolean
+}
+
+class AuditoriaLog {
+    - id: Long
+    - fecha_hora: LocalDateTime
+    - tipo_evento: String
+    - usuario_id: Long
+    - username: String
+    - ip_address: String
+    - descripcion: String
+    - datos_adicionales: String
+    - nivel: String
+    - modulo: String
+    --
+    + {static} loginExitoso(): AuditoriaLog
+    + {static} loginFallido(): AuditoriaLog
+    + {static} usuarioBloqueado(): AuditoriaLog
+    + {static} recuperacionPassword(): AuditoriaLog
+}
+
+' ===== SERVICIOS =====
+
+class AutenticarService <<interface>> {
+    + autenticar(AuthenticatorRq): AutenticatorRs
+}
+
+class AutenticarServiceImpl {
+    - MAX_INTENTOS: int = 3
+    - MINUTOS_BLOQUEO: int = 5
+    --
+    - passwordEncoder: PasswordEncoder
+    - jwtUtil: JwtUtil
+    - usuarioRepository: UsuarioRepository
+    - auditoriaLogRepository: AuditoriaLogRepository
+    --
+    + autenticar(AuthenticatorRq): AutenticatorRs
+    - registrarIntentoFallido(Usuario, String): void
+    - registrarLoginExitoso(Usuario, String): void
+    - obtenerIpCliente(): String
+}
+
+class AuditoriaService <<interface>> {
+    + consultarLogs(...): List<AuditoriaLog>
+    + obtenerEstadisticas(): AuditoriaEstadisticasRs
+    + registrarLog(AuditoriaLog): void
+}
+
+class AuditoriaServiceImpl {
+    - auditoriaLogRepository: AuditoriaLogRepository
+    --
+    + consultarLogs(...): List<AuditoriaLog>
+    + obtenerEstadisticas(): AuditoriaEstadisticasRs
+    + registrarLog(AuditoriaLog): void
+}
+
+' ===== REPOSITORIOS =====
+
+interface UsuarioRepository <<JpaRepository>> {
+    + findByUsername(String): Optional<Usuario>
+    + findByEmail(String): Optional<Usuario>
+}
+
+interface AuditoriaLogRepository <<JpaRepository>> {
+    + buscarConFiltros(...): List<AuditoriaLog>
+    + contarPorTipoEvento(): List<Object[]>
+    + contarPorNivel(): List<Object[]>
+}
+
+interface SessionRepository <<JpaRepository>> {
+    + findByToken(String): Optional<Session>
+}
+
+' ===== RELACIONES =====
+
+' Relaciones de dominio
+Medico "1" --> "1" Especializacion : tiene >
+Cita "N" --> "1" Paciente : asociada a >
+Cita "N" --> "1" Medico : atendida por >
+Receta "1" --> "1" Cita : generada en >
+Receta "1" --> "N" Medicamento : incluye >
+
+' Relaciones de seguridad
+Session "N" --> "1" Usuario : pertenece a >
+AuditoriaLog "N" ..> "1" Usuario : registra eventos de >
+
+' Relaciones de servicios
+AutenticarServiceImpl ..|> AutenticarService : implements
+AuditoriaServiceImpl ..|> AuditoriaService : implements
+
+AutenticarServiceImpl --> UsuarioRepository : usa >
+AutenticarServiceImpl --> AuditoriaLogRepository : usa >
+AutenticarServiceImpl --> SessionRepository : usa >
+
+AuditoriaServiceImpl --> AuditoriaLogRepository : usa >
+
+' Repositorios extienden JpaRepository
+UsuarioRepository --|> JpaRepository
+AuditoriaLogRepository --|> JpaRepository
+SessionRepository --|> JpaRepository
+
+interface JpaRepository <<Spring Data>> {
+    + save(T): T
+    + findById(ID): Optional<T>
+    + findAll(): List<T>
+    + delete(T): void
+}
+
+note right of Usuario
+  **Campos de seguridad:**
+  - Control de intentos fallidos
+  - Bloqueo temporal
+  - Rastreo de IP y accesos
+  - Token de recuperación
+end note
+
+note right of AuditoriaLog
+  **Tipos de eventos:**
+  - LOGIN_EXITOSO
+  - LOGIN_FALLIDO
+  - USUARIO_BLOQUEADO
+  - RECUPERACION_PASSWORD
+  - CAMBIO_PASSWORD
+end note
+
+note bottom of AutenticarServiceImpl
+  **Funcionalidades:**
+  - Validación con BCrypt
+  - Control de 3 intentos
+  - Bloqueo por 5 minutos
+  - Generación de JWT
+  - Registro de auditoría
+end note
+
+@enduml

@@ -24,13 +24,6 @@ public class SecurityConfig {
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
 
-   /**
-     * Filtro de seguridad.
-     *
-     * @param http peticion de entrada.
-     * @return Autorizado.
-     * @throws Exception Excepcion.
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http
@@ -38,8 +31,10 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable() // Deshabilita CSRF si estás probando con Postman
                 .authorizeHttpRequests((requests) -> requests
-                    // Permitir acceso sin autenticación solo a login y recuperar-contrasena
-                    .antMatchers("/auth/login", "/auth/recuperar-contrasena").permitAll()
+                    // Permitir acceso sin autenticación a login y password recovery
+                    .antMatchers("/auth/login", "/password-recovery/**").permitAll()
+                    // Permitir acceso a Swagger/OpenAPI sin autenticación
+                    .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/api-docs/**").permitAll()
                     // El resto de endpoints requieren autenticación
                     .anyRequest().authenticated()
                 )
