@@ -1,0 +1,159 @@
+@startuml Diagrama de Despliegue - Sistema de Gestión Clínica
+
+' Configuración
+skinparam node {
+    BackgroundColor LightYellow
+    BorderColor DarkOrange
+}
+skinparam component {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+}
+skinparam database {
+    BackgroundColor LightGreen
+    BorderColor DarkGreen
+}
+
+' ===== NODO: CLIENTE =====
+node "Navegador Web" as Browser {
+    component "Angular 19\nSPA Application" as Angular {
+        [Login Component]
+        [Auditoría Component]
+        [Dashboard]
+        [Gestión Módulos]
+    }
+    
+    note right of Angular
+        **Puerto:** 4200
+        **Framework:** Angular 19
+        **Tecnologías:**
+        - TypeScript
+        - Bootstrap
+        - Angular Material
+        - NgxSpinner
+        - SweetAlert2
+    end note
+}
+
+' ===== NODO: SERVIDOR DE APLICACIÓN =====
+node "Servidor de Aplicación\n(Tomcat Embedded)" as AppServer {
+    component "Spring Boot 2.7.18\nBackend API REST" as Backend {
+        [Security Layer] <<JWT Filter>>
+        [Controllers] <<REST API>>
+        [Services] <<Business Logic>>
+        [Repositories] <<Data Access>>
+    }
+    
+    note right of Backend
+        **Puerto:** 8000
+        **Context Path:** /clinica/v1
+        **Tecnologías:**
+        - Java 21
+        - Spring Security
+        - Hibernate/JPA
+        - BCrypt
+        - JWT (jjwt 0.11.5)
+        - JavaMailSender
+    end note
+}
+
+' ===== NODO: BASE DE DATOS =====
+database "MySQL 8.0.43\nBase de Datos" as DB {
+    [clinica schema]
+    
+    note bottom of DB
+        **Puerto:** 3306
+        **Codificación:** utf8mb4
+        **Tablas principales:**
+        - usuario (con seguridad)
+        - auditoria_log
+        - session
+        - medico, paciente, cita
+        - medicamento, receta
+        - especializacion
+    end note
+}
+
+' ===== NODO: SERVIDOR DE CORREO =====
+cloud "Gmail SMTP Server" as SMTP {
+    component "JavaMailSender" as Mail
+    
+    note right of SMTP
+        **Host:** smtp.gmail.com
+        **Puerto:** 587
+        **Protocolo:** SMTP con STARTTLS
+        **Uso:** Recuperación de contraseña
+    end note
+}
+
+' ===== RELACIONES Y PROTOCOLOS =====
+
+Browser -down-> AppServer : **HTTP/HTTPS**\nREST API Calls\nJSON
+AppServer -down-> DB : **JDBC**\nMySQL Connector\nSQL Queries
+AppServer -right-> SMTP : **SMTP**\nport 587\nEmail notifications
+
+' Detalle de comunicación HTTP
+note on link
+    **Endpoints principales:**
+    POST /auth/login
+    POST /auth/recuperar-contrasena
+    GET /auditoria
+    GET /swagger-ui.html
+    
+    **Headers:**
+    Authorization: Bearer {JWT}
+    Content-Type: application/json
+end note
+
+' ===== COMPONENTES ADICIONALES =====
+
+component "Swagger UI" as Swagger
+component "CORS Filter" as CORS
+
+AppServer ..> Swagger : expone documentación
+Backend ..> CORS : permite\nlocalhost:4200
+
+' ===== ARQUITECTURA DE CAPAS =====
+
+package "Arquitectura en Capas" {
+    [Capa de Presentación\n(Angular)] as CapaPresentacion
+    [Capa de API REST\n(Controllers)] as CapaAPI
+    [Capa de Negocio\n(Services)] as CapaNegocio
+    [Capa de Persistencia\n(Repositories)] as CapaPersistencia
+    [Capa de Datos\n(MySQL)] as CapaDatos
+}
+
+CapaPresentacion -down-> CapaAPI
+CapaAPI -down-> CapaNegocio
+CapaNegocio -down-> CapaPersistencia
+CapaPersistencia -down-> CapaDatos
+
+note right of "Arquitectura en Capas"
+    **Patrón:** Arquitectura en Capas
+    **Estilo:** Monolítico modular
+    **Comunicación:** REST + JSON
+    **Seguridad:** JWT + BCrypt
+    **Auditoría:** Logs completos
+end note
+
+' ===== LEYENDA =====
+
+legend bottom
+    **Protocolos de Comunicación:**
+    - **HTTP/HTTPS**: Comunicación cliente-servidor (REST API)
+    - **JDBC**: Conexión a base de datos (HikariCP pool)
+    - **SMTP**: Envío de correos electrónicos
+    
+    **Componentes de Seguridad:**
+    - JWT Token Filter (autenticación stateless)
+    - BCrypt Password Encoder (hash de contraseñas)
+    - CORS Configuration (seguridad cross-origin)
+    - Spring Security (autorización y protección)
+    
+    **Auditoría:**
+    - Logs de todos los eventos de seguridad
+    - Rastreo de IP y timestamps
+    - Registro de intentos fallidos y bloqueos
+end legend
+
+@enduml
