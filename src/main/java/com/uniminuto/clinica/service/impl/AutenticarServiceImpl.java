@@ -2,6 +2,7 @@ package com.uniminuto.clinica.service.impl;
 
 import com.uniminuto.clinica.entity.AuditoriaLog;
 import com.uniminuto.clinica.entity.Usuario;
+import com.uniminuto.clinica.exception.AuthenticationException;
 import com.uniminuto.clinica.model.AutenticatorRs;
 import com.uniminuto.clinica.model.AuthenticatorRq;
 import com.uniminuto.clinica.repository.AuditoriaLogRepository;
@@ -136,8 +137,9 @@ public class AutenticarServiceImpl implements AutenticarService {
             errorData.put("bloqueadoHasta", usuario.getBloqueadoHasta().toString());
             errorData.put("mensaje", "Usuario bloqueado. Intente nuevamente en " + minutosRestantes + " minutos");
             
-            throw new BadRequestException(
-                "Usuario bloqueado. Intente nuevamente en " + minutosRestantes + " minutos"
+            throw new AuthenticationException(
+                "Usuario bloqueado. Intente nuevamente en " + minutosRestantes + " minutos",
+                errorData
             );
         }
 
@@ -170,7 +172,11 @@ public class AutenticarServiceImpl implements AutenticarService {
             int intentosRestantes = MAX_INTENTOS - (usuario.getIntentosFallidos() != null ? usuario.getIntentosFallidos() : 0);
             
             if (intentosRestantes <= 0) {
-                throw new BadRequestException("Usuario bloqueado por exceder intentos");
+                Map<String, Object> bloqueadoData = new HashMap<>();
+                bloqueadoData.put("bloqueado", true);
+                bloqueadoData.put("bloqueadoHasta", usuario.getBloqueadoHasta().toString());
+                bloqueadoData.put("mensaje", "Usuario bloqueado por exceder intentos");
+                throw new AuthenticationException("Usuario bloqueado por exceder intentos", bloqueadoData);
             }
             
             Map<String, Object> errorData = new HashMap<>();
@@ -178,8 +184,9 @@ public class AutenticarServiceImpl implements AutenticarService {
             errorData.put("intentosRestantes", intentosRestantes);
             errorData.put("mensaje", "Credenciales incorrectas. Le quedan " + intentosRestantes + " intentos");
             
-            throw new BadRequestException(
-                "Credenciales incorrectas. Le quedan " + intentosRestantes + " intentos"
+            throw new AuthenticationException(
+                "Credenciales incorrectas. Le quedan " + intentosRestantes + " intentos",
+                errorData
             );
         }
 
