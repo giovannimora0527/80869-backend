@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 public class ClinicaServiceImpl implements ClinicaService {
 
     @Override
-    public RespuestaRs test() {
+    public RespuestaRs testearApp() {
         RespuestaRs rta = new RespuestaRs();
-        rta.setMensaje("El servicio de clinica esta funcionando MELO");
         rta.setStatus(200);
+        rta.setMensaje("Hola Mundo");
         return rta;
     }
-
+    
 }

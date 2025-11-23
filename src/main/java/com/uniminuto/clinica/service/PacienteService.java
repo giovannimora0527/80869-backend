@@ -1,21 +1,28 @@
 package com.uniminuto.clinica.service;
 
 import com.uniminuto.clinica.entity.Paciente;
-import com.uniminuto.clinica.model.PacienteRq;
-import com.uniminuto.clinica.model.RespuestaRs;
+import java.util.List;
 import org.apache.coyote.BadRequestException;
 
-import java.util.List;
-
+/**
+ *
+ * @author lmora
+ */
 public interface PacienteService {
+    /**
+     * Lista todos los pacientes de la bd.
+     * @return Lista de pacientes.
+     */
+    List<Paciente> encontrarTodosLosPacientes();
 
-    List<Paciente> listarPacientes();
+    /**
+     * Busca un paciente dado un documento de identidad.
+     * @param documento documento a buscar.
+     * @return Paciente encontrado.
+     * @throws BadRequestException excepcion.
+     */
+    Paciente buscarPacientePorDocumento(String documento) throws BadRequestException;
 
-    Paciente buscarPorDocumento(String documento) throws BadRequestException;
 
-    List<Paciente> listarPacientesOrdenadoPorFechaNacimiento();
-
-    RespuestaRs guardarPaciente(PacienteRq pacienteRq) throws BadRequestException;
-
-    RespuestaRs actualizarPaciente(PacienteRq pacienteRq) throws BadRequestException;
+    List<Paciente> listarOrdenadoPorFechaNacimiento(boolean ascendente);
 }

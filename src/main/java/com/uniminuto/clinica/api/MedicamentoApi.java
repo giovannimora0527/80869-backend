@@ -1,4 +1,3 @@
-
 package com.uniminuto.clinica.api;
 
 import com.uniminuto.clinica.entity.Medicamento;
@@ -22,6 +21,7 @@ public interface MedicamentoApi {
             consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Medicamento>> listarMedicamentos();
+
 
     @RequestMapping(value = "/guardar",
             produces = {"application/json"},

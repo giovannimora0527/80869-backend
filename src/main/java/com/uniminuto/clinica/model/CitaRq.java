@@ -2,25 +2,40 @@ package com.uniminuto.clinica.model;
 
 import lombok.Data;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Data
 public class CitaRq {
+    /**
+     * Identificador del paciente asociado a la cita.
+     */
+    @NotNull(message = "El identificador del paciente es obligatorio.")
+    private Integer pacienteId;
 
-    private Long id;
+    /**
+     * Identificador del médico que atenderá la cita.
+     */
+    @NotNull(message = "El identificador del médico es obligatorio.")
+    private Integer medicoId;
 
-    @NotNull(message = "El campo medicoId es obligatorio")
-    private Long medicoId;
+    /**
+     * Fecha y hora programada para la cita (formato ISO 8601)
+     * yyyy-MM-dd HH:mm:ss.
+     */
+    @NotBlank(message = "La fecha y hora de la cita es obligatoria.")
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$", message = "La fecha y hora debe tener el formato yyyy-MM-dd HH:mm:ss.")
+    private String fechaHora;
 
-    @NotNull(message = "El campo pacienteId es obligatorio")
-    private Long pacienteId;
-
-    @NotNull(message = "El campo fechaHora es obligatorio")
-    private LocalDateTime fechaHora;
-
-    @NotNull(message = "El campo estado es obligatorio")
+    /**
+     * Estado actual de la cita (por ejemplo: programada, cancelada, completada).
+     */
+    @NotBlank(message = "El estado de la cita es obligatorio.")
     private String estado;
 
-    @NotNull(message = "El campo motivo es obligatorio")
+    /**
+     * Motivo o razón de la cita.
+     */
+    @NotBlank(message = "El motivo de la cita es obligatorio.")
     private String motivo;
 }

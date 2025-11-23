@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class MedicamentoRq {
-    private Long id;
+    private Integer id;
     private String nombre;
     private String descripcion;
     private String presentacion;

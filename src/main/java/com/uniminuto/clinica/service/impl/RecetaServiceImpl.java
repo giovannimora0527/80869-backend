@@ -20,118 +20,95 @@ import java.util.Optional;
 @Service
 public class RecetaServiceImpl implements RecetaService {
 
+    /**
+     * Repositorio de datos para recetas médicas.
+     */
     @Autowired
     private RecetaRepository recetaRepository;
 
+    /**
+     * CitaRepository.
+     */
     @Autowired
     private CitaRepository citaRepository;
 
+    /**
+     * MedicamentoRepository.
+     */
     @Autowired
     private MedicamentoRepository medicamentoRepository;
 
     @Override
     public List<Receta> listarRecetas() {
-        return this.recetaRepository.findAllByOrderByFechaCreacionRegistroDesc();
+        return this.recetaRepository.findAll();
     }
 
     @Override
     public RespuestaRs guardarReceta(RecetaRq recetaRq) throws BadRequestException {
-        validarCampos(recetaRq);
-
-        Optional<Cita> citaOpt = this.citaRepository.findById(recetaRq.getCitaId());
-        if (!citaOpt.isPresent()) {
-            throw new BadRequestException("No existe la cita asociada");
+        Optional<Medicamento> optMedicamento = this.medicamentoRepository.findById(recetaRq.getMedicamentoId());
+        if (optMedicamento.isEmpty()) {
+            throw new BadRequestException("El medicamento con ID " + recetaRq.getMedicamentoId() + " no existe.");
         }
 
-        Optional<Medicamento> medicamentoOpt = this.medicamentoRepository.findById(recetaRq.getMedicamentoId());
-        if (!medicamentoOpt.isPresent()) {
-            throw new BadRequestException("No existe el medicamento asociado");
+        Optional<Cita> optCita = this.citaRepository.findById(recetaRq.getCitaId());
+        if(optCita.isEmpty()) {
+            throw new BadRequestException("La cita con ID " + recetaRq.getCitaId() + " no existe.");
         }
 
-        List<Receta> recetasExistentes =
-                this.recetaRepository.findByCitaAndMedicamento(citaOpt.get(), medicamentoOpt.get());
+        Cita cita = optCita.get();
+        Medicamento medicamento = optMedicamento.get();
+        List<Receta> recetasExistentes = this.recetaRepository.findByCitaAndMedicamento(cita, medicamento);
         if (!recetasExistentes.isEmpty()) {
-            throw new BadRequestException("Ya existe una receta para la cita y medicamento indicados");
+            throw new BadRequestException("Ya existe una receta para la cita con ID " + recetaRq.getCitaId() +
+                    " y el medicamento con ID " + recetaRq.getMedicamentoId() + ".");
         }
 
-        Receta recetaAGuardar = convertirAReceta(recetaRq);
-        recetaAGuardar.setCita(citaOpt.get());
-        recetaAGuardar.setMedicamento(medicamentoOpt.get());
-        recetaRepository.save(recetaAGuardar);
-
+        Receta receta = this.convertirRqAEntidad(recetaRq, optCita.get(), optMedicamento.get());
+        this.recetaRepository.save(receta);
         RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Receta guardada exitosamente.");
         rta.setStatus(200);
-        rta.setMensaje("Receta guardada exitosamente");
         return rta;
     }
 
     @Override
     public RespuestaRs actualizarReceta(RecetaRq recetaRq) throws BadRequestException {
-        if (recetaRq.getId() == null) {
-            throw new BadRequestException("El id de la receta es obligatorio para actualizar");
+        Optional<Receta> optReceta = this.recetaRepository.findById(recetaRq.getId());
+        if (optReceta.isEmpty()) {
+            throw new BadRequestException("La receta con ID " + recetaRq.getId() + " no existe.");
         }
 
-        Optional<Receta> recetaOpt = this.recetaRepository.findById(recetaRq.getId());
-        if (!recetaOpt.isPresent()) {
-            throw new BadRequestException("No se puede actualizar la receta porque no existe");
+        Receta recetaActual = optReceta.get();
+        if (!recetaActual.getMedicamento().getId().equals(recetaRq.getMedicamentoId())) {
+            Optional<Medicamento> optMedicamento = this.medicamentoRepository.findById(recetaRq.getMedicamentoId());
+            if (optMedicamento.isEmpty()) {
+                throw new BadRequestException("El medicamento con ID " + recetaRq.getMedicamentoId() + " no existe.");
+            }
+            recetaActual.setMedicamento(optMedicamento.get());
         }
 
-        Receta recetaActual = recetaOpt.get();
-
-        // Validar relaciones
-        Optional<Cita> citaOpt = this.citaRepository.findById(recetaRq.getCitaId());
-        if (!citaOpt.isPresent()) {
-            throw new BadRequestException("No existe la cita asociada");
-        }
-
-        Optional<Medicamento> medicamentoOpt = this.medicamentoRepository.findById(recetaRq.getMedicamentoId());
-        if (!medicamentoOpt.isPresent()) {
-            throw new BadRequestException("No existe el medicamento asociado");
-        }
-
-        // Evitar duplicados de receta con la misma cita y medicamento
-        List<Receta> recetasExistentes =
-                this.recetaRepository.findByCitaAndMedicamento(citaOpt.get(), medicamentoOpt.get());
-        if (!recetasExistentes.isEmpty()
-                && !recetasExistentes.get(0).getId().equals(recetaActual.getId())) {
-            throw new BadRequestException("Ya existe una receta con la misma cita y medicamento");
-        }
-
-        // Actualizar campos
-        recetaActual.setCita(citaOpt.get());
-        recetaActual.setMedicamento(medicamentoOpt.get());
-        recetaActual.setDosis(recetaRq.getDosis() != null ? recetaRq.getDosis() : recetaActual.getDosis());
-        recetaActual.setIndicaciones(recetaRq.getIndicaciones() != null ? recetaRq.getIndicaciones() : recetaActual.getIndicaciones());
-        recetaActual.setFechaCreacionRegistro(LocalDateTime.now());
-
+        recetaActual.setDosis(recetaRq.getDosis());
+        recetaActual.setIndicaciones(recetaRq.getIndicaciones());
+        recetaActual.setFechaActualizacionRegistro(LocalDateTime.now());
         this.recetaRepository.save(recetaActual);
-
         RespuestaRs rta = new RespuestaRs();
+        rta.setMensaje("Receta actualizada exitosamente.");
         rta.setStatus(200);
-        rta.setMensaje("Receta actualizada exitosamente");
         return rta;
     }
 
-    private Receta convertirAReceta(RecetaRq recetaRq) {
+    /**
+     * Convierte un objeto RecetaRq a una entidad Receta.
+     * @param recetaRq receta de entrada.
+     * @return entidad receta.
+     */
+    private Receta convertirRqAEntidad(RecetaRq recetaRq, Cita cita, Medicamento medicamento) {
         Receta receta = new Receta();
+        receta.setCita(cita);
+        receta.setMedicamento(medicamento);
         receta.setDosis(recetaRq.getDosis());
         receta.setIndicaciones(recetaRq.getIndicaciones());
         receta.setFechaCreacionRegistro(LocalDateTime.now());
         return receta;
-    }
-
-    private void validarCampos(RecetaRq recetaRq) throws BadRequestException {
-        if (recetaRq.getCitaId() == null) {
-            throw new BadRequestException("El campo citaId es obligatorio");
-        }
-        if (recetaRq.getMedicamentoId() == null) {
-            throw new BadRequestException("El campo medicamentoId es obligatorio");
-        }
-        if (recetaRq.getDosis() == null || recetaRq.getDosis().isEmpty()) {
-            throw new BadRequestException("El campo dosis es obligatorio");
-        }
-        if (recetaRq.getIndicaciones() == null || recetaRq.getIndicaciones().isEmpty()) {
-            throw new BadRequestException("El campo indicaciones es obligatorio");
-        }
     }
 }

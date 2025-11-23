@@ -12,15 +12,15 @@ import org.apache.coyote.BadRequestException;
  */
 public interface UsuarioSevice {
     List<Usuario> encontrarTodosLosUsuarios();
-
+    
     List<Usuario> buscarPorRol(String rol);
-
+    
     Usuario buscarPorNombre(String username) throws BadRequestException;
-
+    
     List<Usuario> encontrarPorActivo(boolean activo);
-
+    
     RespuestaRs guardarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
 
     RespuestaRs actualizarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException;
-
+    
 }

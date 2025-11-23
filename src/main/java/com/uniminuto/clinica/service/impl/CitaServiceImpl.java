@@ -13,121 +13,100 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CitaServiceImpl implements CitaService {
 
+    /**
+     * Repositorio de datos para citas.
+     */
     @Autowired
     private CitaRepository citaRepository;
 
+    /**
+     * Repositorio de datos para pacientes.
+     */
     @Autowired
     private PacienteRepository pacienteRepository;
 
+    /**
+     * Repositorio de datos para médicos.
+     */
     @Autowired
     private MedicoRepository medicoRepository;
 
     @Override
     public List<Cita> listarCitas() {
-        return this.citaRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Cita::getFechaHora).reversed())
-                .toList();
+        return citaRepository.findAllByOrderByFechaHoraDesc();
     }
 
     @Override
     public RespuestaRs guardarCita(CitaRq citaRq) throws BadRequestException {
-        this.validarFormulario(citaRq);
-
-        // validar existencia de paciente
-        Optional<Paciente> optPaciente = this.pacienteRepository.findById(citaRq.getPacienteId().longValue());
-        if (!optPaciente.isPresent()) {
-            throw new BadRequestException("Paciente no encontrado");
+        Optional<Paciente> optPaciente = this.pacienteRepository.findById(citaRq.getPacienteId());
+        if (optPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente con ID " + citaRq.getPacienteId() + " no existe.");
         }
 
-        // validar existencia de medico
-        Optional<Medico> optMedico = this.medicoRepository.findById(citaRq.getMedicoId().longValue());
-        if (!optMedico.isPresent()) {
-            throw new BadRequestException("Medico no encontrado");
+        Optional<Medico> optMedico = this.medicoRepository.findById(citaRq.getMedicoId());
+        if (optMedico.isEmpty()) {
+           throw new BadRequestException("El médico con ID " + citaRq.getMedicoId() + " no existe.");
         }
 
-        Cita nuevo = convertirACita(citaRq, optPaciente.get(), optMedico.get());
-        this.citaRepository.save(nuevo);
+        LocalDateTime fechaInicio = LocalDateTime.parse(citaRq.getFechaHora(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime fechaFin = fechaInicio.plusMinutes(20);
 
+        List<Cita> citasDelMedico = this.citaRepository
+                .findByMedicoAndFechaHoraBetween(optMedico.get(), fechaInicio, fechaFin);
+
+        if (!citasDelMedico.isEmpty()) {
+            throw new BadRequestException("El médico ya tiene una cita programada en ese horario.");
+        }
+
+        List<Cita> citasDelPaciente = this.citaRepository
+                .findByPacienteAndFechaHoraBetween(optPaciente.get(), fechaInicio, fechaFin);
+
+        if (!citasDelPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente ya tiene una cita programada en ese horario.");
+        }
+
+        Cita citaNueva = this.converterToCita(citaRq, optPaciente.get(), optMedico.get());
+        this.citaRepository.save(citaNueva);
         RespuestaRs rta = new RespuestaRs();
         rta.setStatus(200);
-        rta.setMensaje("Cita creada exitosamente");
+        rta.setMensaje("Cita creada exitosamente.");
         return rta;
     }
 
     @Override
-    public RespuestaRs actualizarCita(CitaRq citaRq) throws BadRequestException {
-        if (citaRq.getId() == null) {
-            throw new BadRequestException("El id de la cita es obligatorio");
+    public List<Cita> listarCitasporPaciente(Integer pacienteId) throws BadRequestException {
+        Optional<Paciente> optPaciente = this.pacienteRepository.findById(pacienteId);
+        if (optPaciente.isEmpty()) {
+            throw new BadRequestException("El paciente con ID " + pacienteId + " no existe.");
         }
-
-        Optional<Cita> optCita = this.citaRepository.findById(citaRq.getId());
-        if (!optCita.isPresent()) {
-            throw new BadRequestException("No se puede actualizar la cita porque no existe.");
-        }
-
-        Cita citaActual = optCita.get();
-
-        // Si cambian las referencias a paciente o medico, validar existencia
-        if (citaRq.getPacienteId() != null &&
-                !citaActual.getPaciente().getId().equals(citaRq.getPacienteId().longValue())) {
-            Optional<Paciente> optPaciente = this.pacienteRepository.findById(citaRq.getPacienteId().longValue());
-            if (!optPaciente.isPresent()) {
-                throw new BadRequestException("Paciente no encontrado");
-            }
-            citaActual.setPaciente(optPaciente.get());
-        }
-
-        if (citaRq.getMedicoId() != null &&
-                !citaActual.getMedico().getId().equals(citaRq.getMedicoId().longValue())) {
-            Optional<Medico> optMedico = this.medicoRepository.findById(citaRq.getMedicoId().longValue());
-            if (!optMedico.isPresent()) {
-                throw new BadRequestException("Medico no encontrado");
-            }
-            citaActual.setMedico(optMedico.get());
-        }
-
-        citaActual.setFechaHora(citaRq.getFechaHora() == null ? citaActual.getFechaHora() : citaRq.getFechaHora());
-        citaActual.setEstado(citaRq.getEstado() == null ? citaActual.getEstado() : citaRq.getEstado());
-        citaActual.setMotivo(citaRq.getMotivo() == null ? citaActual.getMotivo() : citaRq.getMotivo());
-
-        this.citaRepository.save(citaActual);
-
-        RespuestaRs rta = new RespuestaRs();
-        rta.setMensaje("Se ha actualizado el registro satisfactoriamente");
-        rta.setStatus(200);
-        return rta;
+        return this.citaRepository.findByPacienteOrderByFechaHoraDesc(optPaciente.get());
     }
 
-    private Cita convertirACita(CitaRq rq, Paciente paciente, Medico medico) {
-        Cita c = new Cita();
-        c.setPaciente(paciente);
-        c.setMedico(medico);
-        c.setFechaHora(rq.getFechaHora());
-        c.setEstado(rq.getEstado());
-        c.setMotivo(rq.getMotivo());
-        return c;
+    /**
+     * Convierte un objeto CitaRq a una entidad Cita.
+     * @param citaRq objeto de entrada.
+     * @param paciente paciente de la cita.
+     * @param medico medico de la cita.
+     * @return entidad Cita.
+     */
+    private Cita converterToCita(CitaRq citaRq, Paciente paciente, Medico medico) {
+        Cita cita = new Cita();
+        cita.setEstado(citaRq.getEstado());
+        cita.setMotivo(citaRq.getMotivo());
+        cita.setFechaHora(LocalDateTime.parse(citaRq.getFechaHora(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        cita.setPaciente(paciente);
+        cita.setMedico(medico);
+        return cita;
     }
 
-    private void validarFormulario(CitaRq rq) throws BadRequestException {
-        if (rq.getPacienteId() == null) {
-            throw new BadRequestException("El campo pacienteId es obligatorio");
-        }
-        if (rq.getMedicoId() == null) {
-            throw new BadRequestException("El campo medicoId es obligatorio");
-        }
-        if (rq.getFechaHora() == null) {
-            throw new BadRequestException("El campo fechaHora es obligatorio");
-        }
-        if (rq.getEstado() == null || rq.getEstado().isEmpty()) {
-            throw new BadRequestException("El campo estado es obligatorio");
-        }
-    }
 }
