@@ -1,6 +1,13 @@
 package com.uniminuto.clinica.security;
 
 import java.util.List;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,12 +46,14 @@ public class SecurityConfig {
                 .csrf().disable() // Deshabilita CSRF si estás probando con Postman
                 .authorizeHttpRequests((requests) -> requests
                     // Permitir acceso sin autenticación solo a login y recuperar-contrasena
-                    .antMatchers("/auth/login", "/auth/recuperar-contrasena").permitAll()
+                    .antMatchers("/auth/login", "/auth/pwdRequest").permitAll()
                     // El resto de endpoints requieren autenticación
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout((logout) -> logout.permitAll());
+
+        //http.cors().and().csrf().ignoringAntMatchers("/swagger-ui/**", "/swagger-ui.html");
 
         return http.build();
     }

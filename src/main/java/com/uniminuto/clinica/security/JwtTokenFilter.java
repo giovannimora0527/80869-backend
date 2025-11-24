@@ -46,8 +46,9 @@ public class JwtTokenFilter extends GenericFilterBean {
         LOG.info(String.format("%s request to %s", request.getMethod(), request.getRequestURL().toString()));
 
         String requestURI = request.getRequestURI();
-        if (requestURI != null && (requestURI.contains("/auth/recuperar-contrasena")
-                || requestURI.contains("/auth/login"))) {
+        if (requestURI != null && (requestURI.contains("/auth/pwdRequest")
+                || requestURI.contains("/auth/login") || requestURI.contains("/swagger-ui")
+                || requestURI.contains("/swagger-ui/"))) {
             try {
                 filterChain.doFilter(req, res);
             } catch (BadRequestException e) {
@@ -59,7 +60,7 @@ public class JwtTokenFilter extends GenericFilterBean {
                         + " \"message\": \"" + e.getMessage() + "\"}");
                 return;
             }
-            LOG.info("Petición a /auth/login o /auth/recuperar-contrasena, se permite sin token.");
+            LOG.info("Petición a /auth/login o /auth/pwdRequest, se permite sin token.");
             return;
         } else if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
