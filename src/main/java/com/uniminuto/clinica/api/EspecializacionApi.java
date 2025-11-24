@@ -19,14 +19,14 @@ public interface EspecializacionApi {
     
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Especializacion>> listarEspecializaciones();
     
     
     @RequestMapping(value = "/buscar-por-codigo",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<Especializacion> buscarPorCodigo(
       @RequestParam String codigo

@@ -23,7 +23,7 @@ public interface RecetaApi {
      */
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Receta>> listarRecetas();
 

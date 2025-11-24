@@ -27,14 +27,14 @@ public interface MedicoApi {
 
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Medico>> listarMedicos();
 
 
     @RequestMapping(value = "/listar-x-cod-esp",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Medico>> listarMedicosporEspecialidad(
             @RequestParam String codigo

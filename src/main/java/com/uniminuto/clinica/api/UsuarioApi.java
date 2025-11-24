@@ -24,7 +24,7 @@ public interface UsuarioApi {
 
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Usuario>> listarUsuarios();
     
@@ -32,7 +32,7 @@ public interface UsuarioApi {
     
     @RequestMapping(value = "/listar-rol",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Usuario>> listarUsuariosPorRol(
        @RequestParam String rol
@@ -41,7 +41,7 @@ public interface UsuarioApi {
     
     @RequestMapping(value = "/buscar-nombre",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<Usuario> buscarUsuarioPorNombre(
        @RequestParam String nombre
@@ -51,7 +51,7 @@ public interface UsuarioApi {
     
     @RequestMapping(value = "/buscar-estado",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Usuario>> buscarUsuariosPorEstado(
        @RequestParam Integer activo

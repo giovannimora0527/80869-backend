@@ -46,5 +46,14 @@ public class Usuario implements Serializable {
 
     @Column(name = "email")
     private String email;
-    
+
+    // Añadimos para poder llevar los registros de intento de inicio de sesión
+
+    @Column(name = "intentos_fallidos")
+    private Integer intentosFallidos;
+
+    @Column(name = "fecha_bloqueo")
+    private LocalDateTime fechaBloqueo;
+
+
 }

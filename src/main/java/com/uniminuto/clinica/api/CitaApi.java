@@ -24,7 +24,7 @@ public interface CitaApi {
      */
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
+            //consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Cita>> listarCitas();
 
